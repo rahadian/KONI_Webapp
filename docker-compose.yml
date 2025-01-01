@@ -1,0 +1,63 @@
+version: '3'
+services:
+  koni_mysql-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: koni_mysql-app
+    container_name: koni_mysql-app
+    restart: unless-stopped
+    volumes:
+      - ./:/var/www/html
+      - ./php/local.ini:/usr/local/etc/php/conf.d/local.ini
+      - ./php/php-fpm.conf:/usr/local/etc/php-fpm.d/php-fpm.conf
+    tty: true
+    environment:
+      SERVICE_NAME: koni_mysql-app
+      SERVICE_TAGS: dev
+    working_dir: /var/www/html
+    networks:
+      - koni_mysql-network
+
+  koni_mysql-db:
+    image: mysql:latest
+    container_name: koni_mysql-db
+    restart: unless-stopped
+    tty: true
+    ports:
+      - 33066:3306
+    environment:
+      MYSQL_DATABASE: koni_web
+      MYSQL_USER: k0n1admin
+      MYSQL_PASSWORD: k0n11337
+      MYSQL_ROOT_PASSWORD: k0n1root1337
+      # MYSQL_ALLOW_EMPTY_PASSWORD: 'no'
+      MYSQL_BIND_ADDRESS: 0.0.0.0
+      MYSQL_ROOT_HOST: '%'
+    volumes:
+      - dbdata:/var/lib/mysql
+      - ./mysql/init-scripts:/docker-entrypoint-initdb.d
+      - ./mysql/my.cnf:/etc/mysql/my.cnf
+    networks:
+      - koni_mysql-network
+
+  nginx:
+    image: nginx:latest
+    container_name: koni_mysql-nginx
+    restart: unless-stopped
+    tty: true
+    ports:
+      - '1213:80'
+    volumes:
+      - ./:/var/www/html
+      - ./nginx/conf.d/:/etc/nginx/conf.d/
+    networks:
+      - koni_mysql-network
+
+networks:
+  koni_mysql-network:
+    driver: bridge
+
+volumes:
+  dbdata:
+    driver: local
