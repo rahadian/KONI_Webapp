@@ -78,18 +78,7 @@
                 {{$informasi->appends(Request::all())->links("pagination::bootstrap-4")}}
             </div>
         </nav>
-        <!-- IG -->
-        <div class="section-heading">
-        <span class="section-title">
-            <b>Instagram <i class="fab fa-instagram"></i></b>
-        </span>
-        </div>
-        <div id="instagram-widget" class="instagram-widget"></div>
-        <div class="pagination-ig">
-        <button id="prev-page" class="pagination-btn">Previous<span class="loading-spinner"></span></button>
-        <button id="next-page" class="pagination-btn">Next<span class="loading-spinner"></span></button>
-        </div><br>
-        <script src={{ asset('js/igwidget.js') }}></script>
+
 
         {{-- <!-- Place <div> tag where you want the feed to appear -->
         <div id="curator-feed-default-feed-layout"><a href="https://curator.io" target="_blank" class="crt-logo crt-tag">Powered by Curator.io</a></div>
@@ -105,13 +94,13 @@
         </script> --}}
 
         <div class="section-heading">
-        <span class="section-title">
+        {{-- <span class="section-title">
             <b>Youtube <i class="fab fa-youtube"></i></b>
-        </span>
+        </span> --}}
         </div>
-        <div>
+        {{-- <div>
         <iframe width="100%" height="315" src="https://www.youtube.com/embed/videoseries?si=fw4x8fcfDmR9W4rW&amp;list=PL0UnsBaOx6gu53-WGNerzQMVRk69HWTCh" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-        </div>
+        </div> --}}
         <hr>
         <br>
 

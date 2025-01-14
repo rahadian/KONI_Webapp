@@ -8,6 +8,9 @@
   <title>
    Dashboard KONI Kabupaten Probolinggo Web
   </title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<!-- Font Awesome -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
   <!--     Fonts and icons     -->
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
   <!-- Nucleo Icons -->
@@ -104,57 +107,122 @@
                     <span class="nav-link-text">Prestasi Cabor</span>
                   </a>
                 </li>
+                {{-- @if(Auth::user()->role=="cabor")
+                <li class="nav-item">
+                  @if($page=='Perencanaan')
+                    <a class="nav-link active" href="{{ route('perencanaan.index') }}">
+                  @else
+                    <a class="nav-link" href="{{ route('perencanaan.index') }}">
+                  @endif
+                    <span class="nav-link-text">Perencanaan</span>
+                  </a>
+                </li>
+                @endif --}}
               </ul>
             </div>
         </li>
-        <li class="nav-item mt-3">
-          <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">Informasi</h6>
-        </li>
-        <li class="nav-item">
-         @if($page=='Informasi')
-          <a class="nav-link active" href="{{ route('informasi.index') }}">
-         @else
-          <a class="nav-link" href="{{ route('informasi.index') }}">
-         @endif
-            <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
-              <i class="fa fa-file text-dark text-sm opacity-10"></i>
-            </div>
-            <span class="nav-link-text ms-1">Berita/Pengumuman</span>
-          </a>
-        </li>
 
+        <li class="nav-item">
+        <a class="nav-link" data-bs-toggle="collapse" href="#keuanganSubmenu" role="button" aria-expanded="false" aria-controls="keuanganSubmenu">
+            <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+            <i class="fas fa-money-bill-transfer text-success text-sm opacity-10"></i>
+            </div>
+            <span class="nav-link-text ms-1">Keuangan</span>
+        </a>
+        <div class="collapse" id="keuanganSubmenu">
+            <ul class="nav ms-4">
+            <li class="nav-item">
+                @if(Auth::user()->role=="cabor")
+                    @if($page=='Perencanaan')
+                    <a class="nav-link active" href="{{ route('perencanaan.index') }}">
+                    @else
+                    <a class="nav-link" href="{{ route('perencanaan.index') }}">
+                    @endif
+                    <span class="nav-link-text ms-1">Perencanaan</span>
+                    </a>
+                 @endif
+                  @if(Auth::user()->role=="admin")
+                    @if($page=='Verifikasi Perencanaan')
+                    <a class="nav-link active" href="{{ route('perencanaan.verifikasi') }}">
+                    @else
+                    <a class="nav-link" href="{{ route('perencanaan.verifikasi') }}">
+                    @endif
+                    <span class="nav-link-text ms-1">Verifikasi Perencanaan</span>
+                    </a>
+                 @endif
+            </li>
+            </ul>
+        </div>
+        </li>
 
         @if(Auth::user()->role=="admin")
-        <li class="nav-item mt-3">
-          <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">Management</h6>
-        </li>
         <li class="nav-item">
-         @if($page=='Users Management')
-          <a class="nav-link active" href="{{ route('users.index') }}">
-         @else
-          <a class="nav-link" href="{{ route('users.index') }}">
-         @endif
+        <a class="nav-link" data-bs-toggle="collapse" href="#informasiSubmenu" role="button" aria-expanded="false" aria-controls="informasiSubmenu">
             <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
-              <i class="ni ni-single-02 text-dark text-sm opacity-10"></i>
+            <i class="fas fa-file text-success text-sm opacity-10"></i>
             </div>
-            <span class="nav-link-text ms-1">Users</span>
-          </a>
-        </li>
-        <li class="nav-item">
-         @if($page=='Limit Nominal Management')
-          <a class="nav-link active" href="{{ route('limit_nominal.index') }}">
-         @else
-          <a class="nav-link" href="{{ route('limit_nominal.index') }}">
-         @endif
-            <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
-              <i class="ni ni-single-02 text-dark text-sm opacity-10"></i>
-            </div>
-            <span class="nav-link-text ms-1">Limit Nominal</span>
-          </a>
+            <span class="nav-link-text ms-1">Informasi</span>
+        </a>
+        <div class="collapse" id="informasiSubmenu">
+            <ul class="nav ms-4">
+            <li class="nav-item">
+                @if($page=='Informasi')
+                <a class="nav-link active" href="{{ route('informasi.index') }}">
+                @else
+                <a class="nav-link" href="{{ route('informasi.index') }}">
+                @endif
+                <span class="nav-link-text ms-1">Berita/Pengumuman</span>
+                </a>
+            </li>
+            </ul>
+        </div>
         </li>
         @endif
 
-
+        @if(Auth::user()->role=="admin")
+        <li class="nav-item">
+        <a class="nav-link" data-bs-toggle="collapse" href="#managementSubmenu" role="button" aria-expanded="false" aria-controls="managementSubmenu">
+            <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+            <i class="ni ni-settings text-dark text-sm opacity-10"></i>
+            </div>
+            <span class="nav-link-text ms-1">Management</span>
+        </a>
+        <div class="collapse" id="managementSubmenu">
+            <ul class="nav ms-4">
+            <li class="nav-item">
+                @if($page=='Users Management')
+                <a class="nav-link active" href="{{ route('users.index') }}">
+                @else
+                <a class="nav-link" href="{{ route('users.index') }}">
+                @endif
+                <span class="nav-link-text ms-1">Users</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                @if($page=='Limit Nominal Management')
+                <a class="nav-link active" href="{{ route('limit_nominal.index') }}">
+                @else
+                <a class="nav-link" href="{{ route('limit_nominal.index') }}">
+                @endif
+                <span class="nav-link-text ms-1">Limit Nominal</span>
+                </a>
+            </li>
+            </ul>
+        </div>
+        </li>
+        @endif
+        <hr style="border-top: 1px solid grey;">
+        <li class="nav-item">
+         <a class="nav-link" href="{{ route('logout') }}" onclick="event.preventDefault();document.getElementById('logout-form').submit();">
+            <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+              <i class="fa-solid fa-door-open text-danger text-md opacity-10"></i>
+            </div>
+            <span class="nav-link-text ms-1"> Log Out</span></a>
+            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+            @csrf
+            </form>
+          </a>
+        </li>
       </ul>
     </div>
 
@@ -175,9 +243,7 @@
             <div class="input-group">
             <ul class="navbar-nav  justify-content-end">
             <li class="nav-item d-flex align-items-center">
-              <a href="javascript:;" class="nav-link text-white font-weight-bold px-0">
-              <span class="d-sm-inline d-none" style='color:#ffff'><i class="fa fa-user me-sm-1"></i> {{ Auth::user()->username }}</span></a>
-
+              <span class="d-sm-inline d-none" style='color:#ffff'><i class="fa fa-user me-sm-1"></i> {{ Auth::user()->username }}</span>
             </li>
             <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
               <a href="javascript:;" class="nav-link text-white p-0" id="iconNavbarSidenav">
@@ -188,7 +254,10 @@
                 </div>
               </a>
             </li>
-            <li class="nav-item px-3 d-flex align-items-center">
+            <li class="nav-item px-3 d-flex">
+                <span class="d-sm-inline d-none" style='color:#ffff'>/</span>
+            </li>
+            <li class="nav-item d-flex align-items-center">
             <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault();document.getElementById('logout-form').submit();">
                 <span class="d-sm-inline d-none" style='color:#ffff'><i class="fa-solid fa-door-open"></i> Log Out</span></a>
                 <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">

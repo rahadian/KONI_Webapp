@@ -13,6 +13,6 @@ class LimitNominal extends Model
         'nominal' => 'integer',
     ];
     protected $fillable = [
-       'username','tahun', 'nominal','created_at','updated_at'
+       'username','tahun', 'nominal','nominal_sisa','nominal_terpakai','created_at','updated_at'
     ];
 }

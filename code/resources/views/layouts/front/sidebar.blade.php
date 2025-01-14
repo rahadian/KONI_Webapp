@@ -66,46 +66,6 @@
             <li class="list-group-item"><a href="{{ route('pengumuman.show_all') }}">Pengumuman({{ $totalpengumuman }})</a></li>
           </ul>
         </div>
-        <div class="card mb-4">
-            <section class="counters">
-			<div class="container">
-				<div>
-					<div class="counter" data-target="352">0</div>
-					<p style="font-size:20px">Desa</p>
-				</div>
-				<div>
-					<div class="counter" data-target="754">0</div>
-					<p style="font-size:20px">Perangkat</p>
-				</div>
-				<div>
-					<div class="counter" data-target="345">0</div>
-					<p style="font-size:20px">BUMDES</p>
-				</div>
-			</div>
-		</section>
-        </div>
-
-        <div class="card mb-4">
-          <div class="card-header">
-            Pejabat Pengelola Pengaduan
-          </div>
-          <img loading="lazy" src="{{ asset('img/pengaduan2.jpeg') }}">
-        </div>
-
-        <div class="card mb-4">
-          <a href="https://wa.me/6282131001001"><img loading="lazy" src="{{ asset('img/laporkanda.jpg') }}" style="width:100%"></a>
-        </div>
-
-        <div class="card mb-4">
-          <a href="https://www.lapor.go.id/" target="_blank"><img loading="lazy" src="{{ asset('img/lapor.jpg') }}" style="width:100%"></a>
-        </div>
-
-        <div class="card mb-4">
-          <div class="card-header">
-            BUMDESA
-          </div>
-          <a href="{{ route('bumdesa') }}"><img loading="lazy" src="{{ asset('img/BUMDESA.JPG') }}" style="width:100%"></a>
-        </div>
 
         <div class="card mb-4" style="height:590px">
           <div class="card-header">

@@ -73,8 +73,6 @@
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
               <a class="dropdown-item" href="{{ route("struktur") }}">Struktur Organisasi</a>
-               <a class="dropdown-item" href="{{ route("dasarhukum") }}">Dasar Hukum Pembentukan</a>
-              <a class="dropdown-item" href="{{ route("sakip") }}">SAKIP</a>
             </div>
           </li>
           <!-- <li class="nav-item">
@@ -93,38 +91,7 @@
                     <a class="dropdown-item" href="{{ route('pengumuman.show_all') }}">Pengumuman</a>
                 </div>
             </li>
-          @if($page == "BUMDESA")
-          <li class="nav-item dropdown active show-dropdown">
-          @else
-          <li class="nav-item dropdown show-dropdown ">
-          @endif
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" aria-haspopup="true" aria-expanded="false" data-toggle="dropdown">
-                    <b>BUMDESA</b>
-                </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <a class="dropdown-item" href="{{ route('bumdesa') }}?bumdes_type=Berbadan+Hukum">Berbadan Hukum</a>
-                <a class="dropdown-item" href="{{ route('bumdesa') }}?bumdes_type=Belum+Berbadan+Hukum">Belum Berbadan Hukum</a>
-            </div>
-          </li>
-          @if($page == "Aplikasi")
-          <li class="nav-item active">
-          @else
-          <li class="nav-item">
-          @endif
-          <a class="nav-link" href="{{ route('aplikasi') }}"><b>APLIKASI</b></a>
-          </li>
-          @if($page == "Produk Hukum")
-          <li class="nav-item active">
-          @else
-          <li class="nav-item">
-          @endif
-          <a class="nav-link" href="{{ route('produk_hukum') }}"><b>PRODUK HUKUM</b></a>
-          </li>
-          @if($page == "Kontak Kami")
-          <li class="nav-item active">
-          @else
-          <li class="nav-item">
-          @endif
+
             <a class="nav-link" href="{{ route('kontak') }}"><b>KONTAK KAMI</b></a>
           </li>
         </ul>

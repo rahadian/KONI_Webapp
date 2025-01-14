@@ -46,6 +46,17 @@ Route::group(['prefix' => 'back','middleware' => 'auth'], function() {
     Route::resource('pelatih_cabor', App\Http\Controllers\PelatihController::class);
     Route::resource('atlit_cabor', App\Http\Controllers\AtlitController::class);
     Route::resource('prestasi_cabor', App\Http\Controllers\PrestasiController::class);
+    Route::get('get-kegiatan', [App\Http\Controllers\PerencanaanController::class,'getKegiatan'])->name('get.kegiatan');
+    Route::get('get-rekening/{kode_kegiatan}', [App\Http\Controllers\PerencanaanController::class,'getRekening']);
+    Route::get('get-belanja/{kode_rekening}', [App\Http\Controllers\PerencanaanController::class,'getBelanja']);
+    Route::get('get-barang/{kode_belanja}', [App\Http\Controllers\PerencanaanController::class,'getBarang']);
+    Route::get('get-harga/{kode_barang}', [App\Http\Controllers\PerencanaanController::class,'getHarga']);
+    Route::get('get-budget-limit/{year}', [App\Http\Controllers\PerencanaanController::class,'getBudgetLimit']);
+    Route::get('/perencanaan/detail/{id}', [App\Http\Controllers\PerencanaanController::class,'getDetail'])->name('perencanaan.detail');
+    Route::get('verifikasi-perencanaan', [App\Http\Controllers\PerencanaanController::class,'verifikasi'])->name('perencanaan.verifikasi');
+    Route::post('/perencanaan/setuju/{id}', [App\Http\Controllers\PerencanaanController::class, 'setuju'])->name('perencanaan.setuju');
+    Route::post('/perencanaan/tolak/{id}', [App\Http\Controllers\PerencanaanController::class, 'tolak'])->name('perencanaan.tolak');
+    Route::resource('perencanaan', App\Http\Controllers\PerencanaanController::class);
     Route::resource('informasi', App\Http\Controllers\InformasiController::class);
 
 });
