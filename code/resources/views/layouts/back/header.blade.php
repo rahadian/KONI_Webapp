@@ -140,6 +140,13 @@
                     @endif
                     <span class="nav-link-text ms-1">Perencanaan</span>
                     </a>
+                    @if($page=='Belanja Barang Jasa')
+                    <a class="nav-link active" href="{{ route('belanja.index') }}">
+                    @else
+                    <a class="nav-link" href="{{ route('belanja.index') }}">
+                    @endif
+                    <span class="nav-link-text ms-1">Belanja</span>
+                    </a>
                  @endif
                   @if(Auth::user()->role=="admin")
                     @if($page=='Verifikasi Perencanaan')

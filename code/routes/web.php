@@ -57,6 +57,8 @@ Route::group(['prefix' => 'back','middleware' => 'auth'], function() {
     Route::post('/perencanaan/setuju/{id}', [App\Http\Controllers\PerencanaanController::class, 'setuju'])->name('perencanaan.setuju');
     Route::post('/perencanaan/tolak/{id}', [App\Http\Controllers\PerencanaanController::class, 'tolak'])->name('perencanaan.tolak');
     Route::resource('perencanaan', App\Http\Controllers\PerencanaanController::class);
+    Route::get('belanja/{year}/{month}',[App\Http\Controllers\BelanjaBarjasController::class,'show'])->name('belanja2.show');
+    Route::resource('belanja', App\Http\Controllers\BelanjaBarjasController::class);
     Route::resource('informasi', App\Http\Controllers\InformasiController::class);
 
 });

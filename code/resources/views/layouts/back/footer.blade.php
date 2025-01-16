@@ -14,7 +14,7 @@
       </footer>
     </div>
   </main>
-  <div class="fixed-plugin">
+  {{-- <div class="fixed-plugin">
     <a class="fixed-plugin-button text-dark position-fixed px-3 py-2">
       <i class="fa fa-cog py-2"> </i>
     </a>
@@ -73,7 +73,7 @@
         </div>
       </div>
     </div>
-  </div>
+  </div> --}}
   <!--   Core JS Files   -->
   <!-- jQuery and Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
