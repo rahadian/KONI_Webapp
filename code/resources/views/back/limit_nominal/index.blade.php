@@ -31,12 +31,15 @@
 
             <div class="card-body px-0 pt-0 pb-2">
               <div class="table-responsive p-0">
-                <table class="table align-items-center mb-0">
+                <table class="table table-hover align-items-center mb-0 ">
                   <thead>
                     <tr>
                       <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">No</th>
                       <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Tahun</th>
                       <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Nominal</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Cabor</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Semester1</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Semester2</th>
                       <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Username</th>
                       <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Created</th>
                       <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Updated</th>
@@ -70,12 +73,27 @@
                             </div>
                         </div>
                     </td>
+                    <td>
+                        <div class="d-flex px-2 py-1">
+                          <div class="d-flex flex-column justify-content-center">
+                            <h6 class="mb-0 text-sm">{{ $dt->cabor }}</h6>
+                          </div>
+                        </div>
+                      </td>
                       <td>
                         <div class="d-flex px-2 py-1">
                           <div class="d-flex flex-column justify-content-center">
-                            <h6 class="mb-0 text-sm">{{ $dt->username }}</h6>
+                            <h6 class="mb-0 text-sm">Rp {{ number_format($dt->semester1, 0, ',', '.') }}</h6>
                           </div>
                         </div>
+                      </td>
+                      <td>
+                        <div class="d-flex px-2 py-1">
+                            <h6 class="mb-0 text-sm">Rp {{ number_format($dt->semester2, 0, ',', '.') }}</h6>
+                        </div>
+                      </td>
+                      <td class="align-middle text-center">
+                        <span class="text-secondary text-xs font-weight-bold">{{ $dt->username }}</span>
                       </td>
                       <td class="align-middle text-center">
                         <span class="text-secondary text-xs font-weight-bold">{{ $dt->created_at }}</span>
@@ -84,8 +102,8 @@
                         <span class="text-secondary text-xs font-weight-bold">{{ $dt->updated_at }}</span>
                       </td>
                       <td class="align-middle text-center">
-                        <a class="btn btn-fill btn-info" href="{{ route("users.edit",[$dt->id]) }}" title='View Detail'><i class="fa fa-eye"></i></a>
-                        <form onsubmit="return confirm('Anda Yakin untuk Menghapus Data Ini ?')" class="d-inline" action="{{ route('users.destroy',[$dt->id]) }}" method="post">
+                        {{-- <a class="btn btn-fill btn-info" href="{{ route("limit_nominal.edit",[$dt->id]) }}" title='View Detail'><i class="fa fa-eye"></i></a> --}}
+                        <form onsubmit="return confirm('Anda Yakin untuk Menghapus Data Ini ?')" class="d-inline" action="{{ route('limit_nominal.destroy',[$dt->id]) }}" method="post">
                         @csrf
                         <input type="hidden" name="_method" value="DELETE">
                         {{-- <input type="submit" value="&#xf1f8;" class="btn btn-danger btn-sm fa fa-trash" style="text-align: center;"> --}}

@@ -53,6 +53,7 @@
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Status</th>
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Created at</th>
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Updated at</th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Updated by</th>
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Action</th>
                                 </tr>
                             </thead>
@@ -80,14 +81,17 @@
                                     </td>
                                     <td class="text-center"><span class="text-secondary text-xs">{{ $dt->created_at }}</span></td>
                                     <td class="text-center"><span class="text-secondary text-xs">{{ $dt->updated_at }}</span></td>
+
                                     <td class="text-center">
                                         @if(Auth::user()->role == "cabor")
+                                            @if($dt->status != 1)
                                              <a class="btn btn-fill btn-info" href="" title='View Detail'><i class="fa fa-eye"></i></a>
                                              <form onsubmit="return confirm('Anda Yakin untuk Menghapus Data Ini ?')" class="d-inline" action="" method="post">
-                                        @csrf
-                                        <input type="hidden" name="_method" value="DELETE">
-                                        <button type="submit" class="btn btn-fill btn-danger"><i class="fa fa-trash" style="font-size: 19px;"></i></button>
-                                        </form>
+                                            @csrf
+                                            <input type="hidden" name="_method" value="DELETE">
+                                            <button type="submit" class="btn btn-fill btn-danger"><i class="fa fa-trash" style="font-size: 19px;"></i></button>
+                                            </form>
+                                            @endif
                                         @endif
                                     </td>
                                 </tr>
@@ -131,10 +135,25 @@
 
                     <div class="alert alert-info" id="budget_info" style="display: none;">
                         <strong>Total Anggaran : <span id="total_limit">Rp 0</span></strong><br>
-                        <strong>Total Anggaran Tersedia: <span id="sisa_anggaran">Rp 0</span></strong>
+                        <strong>Total Anggaran Tersedia: <span id="sisa_anggaran">Rp 0</span></strong><br>
+                        <strong>Total Anggaran Semester 1 Tersedia: <span id="sisa_anggaran_semester1">Rp 0</span></strong><br>
+                        <strong>Total Anggaran Semester 2 Tersedia: <span id="sisa_anggaran_semester2">Rp 0</span></strong>
                     </div>
 
                     <div id="main_form_section" style="display: none;">
+                        <div class="form-group mb-3">
+                            <label>Dianggarkan untuk Bulan</label>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <select class="form-control" name="bulan" id="bulan" required>
+                                        <option value="">Pilih Bulan</option>
+                                        @foreach($months as $key => $month)
+                                            <option value="{{ $key }}">{{ $month }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
                         <div class="form-group mb-3">
                             <label>Kegiatan</label>
                             <div class="input-group">
@@ -174,30 +193,18 @@
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label>Harga Satuan</label>
-                                <input type="text" class="form-control" id="harga_satuan" name="harga_satuan" readonly>
+                                <input type="text" class="form-control" id="harga_satuan" name="harga_satuan">
                             </div>
                             <div class="col-md-6">
                                 <label>Jumlah dan Satuan</label>
                                 <div class="input-group">
-                                    <input type="number" class="form-control" placeholder="Jumlah" name="jumlah" id="jumlah">
+                                    <input type="number" class="form-control" placeholder="Jumlah" name="jumlah" id="jumlah" min="0">
                                     <input type="text" class="form-control" placeholder="Satuan" name="satuan">
                                 </div>
                             </div>
                         </div>
 
-                        <div class="form-group mb-3">
-                            <label>Dianggarkan untuk Bulan</label>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <select class="form-control" name="bulan" id="bulan" required>
-                                        <option value="">Pilih Bulan</option>
-                                        @foreach($months as $key => $month)
-                                            <option value="{{ $key }}">{{ $month }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
+
 
                         <div class="text-right">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
@@ -213,8 +220,25 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     let budgetLimit = 0;
+    let sisaAnggaranSemester1 = 0; // Declare in higher scope
+    let sisaAnggaranSemester2 = 0; // Declare in higher scope
     const form = document.getElementById('budgetForm');
     const yearSelect = document.getElementById('tahun_anggaran');
+    const hargaSatuanInput = document.getElementById('harga_satuan');
+
+    hargaSatuanInput.addEventListener('input', function(e) {
+        // Only process if the field is not readonly
+        if (!this.readOnly) {
+            // Remove non-numeric characters
+            let value = this.value.replace(/[^\d]/g, '');
+
+            // Format the number
+            if (value) {
+                value = parseInt(value, 10);
+                this.value = numberFormat(value);
+            }
+        }
+    });
 
     yearSelect.addEventListener('change', async function() {
         const selectedYear = this.value;
@@ -230,10 +254,16 @@ document.addEventListener('DOMContentLoaded', function() {
             if (response.ok ) {
                 budgetLimit = data['data']['nominal'];
                 sisaAnggaran = data['data']['nominal_sisa'];
+                sisaAnggaranSemester1 = data['data']['semester1'];
+                sisaAnggaranSemester2 = data['data']['semester2'];
                 document.getElementById('total_limit').textContent =
                     `Rp ${new Intl.NumberFormat('id-ID').format(budgetLimit)}`;
                 document.getElementById('sisa_anggaran').textContent =
                     `Rp ${new Intl.NumberFormat('id-ID').format(sisaAnggaran)}`;
+                document.getElementById('sisa_anggaran_semester1').textContent =
+                    `Rp ${new Intl.NumberFormat('id-ID').format(sisaAnggaranSemester1)}`;
+                document.getElementById('sisa_anggaran_semester2').textContent =
+                    `Rp ${new Intl.NumberFormat('id-ID').format(sisaAnggaranSemester2)}`;
                 document.getElementById('budget_info').style.display = 'block';
                 document.getElementById('main_form_section').style.display = 'block';
                 loadKegiatanData();
@@ -268,7 +298,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function resetForm() {
         document.getElementById('main_form_section').style.display = 'none';
         document.getElementById('budget_info').style.display = 'none';
-        budgetLimit = 0;
+        //budgetLimit = 0;
         form.reset();
         // Reset and disable dropdowns
         ['kode_rekening', 'kode_belanja', 'kode_barang'].forEach(id => {
@@ -338,9 +368,18 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
         } else {
-            $('#kode_barang').prop('disabled', true).html('<option value="">Pilih Barang/Jasa</option>');
+            $('#kode_barang').prop('disabled', true).html('<option value="">Pilih Barang/Jasaz</option>');
         }
     });
+
+    function numberFormat(number, decimals = 0, decPoint = ',', thousandsSep = '.') {
+        const fixedNumber = number.toFixed(decimals); // Ensure the number has the correct decimal places
+        const parts = fixedNumber.split('.'); // Split the integer and decimal parts
+
+        parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, thousandsSep); // Add thousands separator
+
+        return parts.join(decPoint); // Join integer and decimal parts with the specified decimal point
+    }
 
     // When barang is selected
     $('#kode_barang').change(function() {
@@ -350,24 +389,68 @@ document.addEventListener('DOMContentLoaded', function() {
                 url: `{{ url('back/get-harga') }}/${kodeBarang}`,
                 type: 'GET',
                 success: function(data) {
-                    $('#harga_satuan').val(data.harga_satuan);
+                    const hargaSatuanField = $('#harga_satuan');
+                    if (data.harga_satuan && data.harga_satuan > 0) {
+                        // If there's a valid price from server, set it and make readonly
+                        hargaSatuanField.val(numberFormat(data.harga_satuan));
+                        hargaSatuanField.prop('readonly', false);
+                        console.log(data.harga_satuan);
+                    } else {
+                        // If no valid price, clear field and make editable
+                        hargaSatuanField.val('');
+                        hargaSatuanField.prop('readonly', false);
+                        console.log(kodeBarang);
+                    }
+                },
+                error: function() {
+                    const hargaSatuanField = $('#harga_satuan');
+                    hargaSatuanField.val('');
+                    hargaSatuanField.prop('readonly', false);
                 }
             });
         } else {
-            $('#harga_satuan').val('');
+            //$('#harga_satuan').val('').prop('readonly', false);
+            const hargaSatuanField = $('#harga_satuan');
+            hargaSatuanField.val('');
+            hargaSatuanField.prop('readonly', false);
+
         }
     });
 
+    function isFirstSemester(month) {
+        // Convert month string to number and check if it's in first semester (1-6)
+        const monthNumber = parseInt(month);
+        return monthNumber >= 1 && monthNumber <= 6;
+    }
+
     // Add validation for budget limit
-    $('#jumlah').on('input', function() {
+    $('#harga_satuan, #jumlah, #bulan').on('input', function() {
         const jumlah = $(this).val();
         const hargaSatuan = $('#harga_satuan').val().replace(/[^0-9]/g, '');
-        const totalCost = jumlah * hargaSatuan;
+        const selectedMonth = $('#bulan').val();
+        //const totalCost = jumlah * hargaSatuan;
 
-        if(totalCost > budgetLimit) {
-            alert('Total melebihi anggaran yang tersedia!');
-            $(this).val('');
+        if (jumlah && hargaSatuan && selectedMonth) {
+            const totalCost = jumlah * parseInt(hargaSatuan, 10);
+            const isFirstSem = isFirstSemester(selectedMonth);
+            const relevantBudget = isFirstSem ? sisaAnggaranSemester1 : sisaAnggaranSemester2;
+            if(totalCost > relevantBudget) {
+                console.log('totalCost:',totalCost);
+                console.log('sisaAnggaranSemester1:',sisaAnggaranSemester1);
+                console.log('relevantBudget:',relevantBudget);
+                alert(`Total melebihi anggaran ${isFirstSem ? 'semester 1' : 'semester 2'} yang tersedia!`);
+                if (this.id === 'jumlah') {
+                    $('#jumlah').val('');
+                } else if (this.id === 'harga_satuan') {
+                    $('#harga_satuan').val('');
+                }
+            }
         }
+    });
+
+        $('#bulan').change(function() {
+        // Trigger the validation when month changes
+        $('#harga_satuan').trigger('input');
     });
 
 });

@@ -172,7 +172,7 @@ class AuthUserController extends Controller
         $users->name = $request->get('name');
         $users->email = $request->get('email');
         $users->username = $request->get('username');
-
+        $users->cabor = $request->get('cabor');
         $check_exist = User::where('username',$request->get('username'))
                             ->first();
 

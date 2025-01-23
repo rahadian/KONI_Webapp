@@ -37,7 +37,7 @@
                 <div class="card-body">
 
                             <div class="mb-4">
-                                <h6 class="text-uppercase">Bulan {{ $months[$month] }}</h6>
+                                <h6 class="text-uppercase">Bulan {{ $months[$month] }} {{ $year }}</h6>
                                 <div class="table-responsive">
                                     <table class="table table-hover align-items-center mb-0">
                                         <thead>

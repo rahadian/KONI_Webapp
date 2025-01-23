@@ -112,6 +112,23 @@
                     </div>
 
                     <div id="main_form_section">
+                        <div class="col-md-6">
+                                <input type="hidden" class="form-control" placeholder="Bulan" name="bulanz" id="bulanz" readonly>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label>Dianggarkan untuk Bulan</label>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <select class="form-control" name="bulan" id="bulan" required>
+                                        <option value="" id="defaultMonth">Pilih Bulan</option>
+                                        <hr>
+                                        @foreach($months as $key => $month)
+                                            <option value="{{ $key }}">{{ $month }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
                         <div class="form-group mb-3">
                             <label>Kegiatan</label>
                             <div class="input-group">
@@ -148,19 +165,19 @@
                             <div class="col-md-6">
                                 <label>Jumlah dan Satuan</label>
                                 <div class="input-group">
-                                    <input type="number" class="form-control" placeholder="Jumlah" name="jumlah" id="jumlah" readonly>
-                                    <input type="text" class="form-control" placeholder="Satuan" name="satuan" id="satuan" readonly>
+                                    <input type="number" class="form-control" placeholder="Jumlah" name="jumlah" id="jumlah" min="0">
+                                    <input type="text" class="form-control" placeholder="Satuan" name="satuan" id="satuan">
                                 </div>
                             </div>
                         </div>
 
-                        <div class="form-group mb-3">
-                            <label>Dianggarkan untuk Bulan</label>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <input type="text" class="form-control" placeholder="Bulan" name="bulan" id="bulan" readonly>
-                                </div>
+                        <div class="row mb-3">
+
+                            <div class="col-md-6">
+                                <label>Keterangan</label>
+                                <input type="text" class="form-control" placeholder="Keterangan" name="keterangan" id="keterangan">
                             </div>
+
                         </div>
                         <div class="alert alert-info" id="budget_info">
                         <strong>Total : <span id="harga_total"> x </span></strong>
@@ -169,10 +186,16 @@
                         <div class="text-right">
                              <form id="form_setuju" action="{{ route('perencanaan.setuju', ':id') }}" method="POST" style="display: inline;">
                                 @csrf
+                                <input type="hidden" class="form-control" name="keterangansetuju" id="keterangansetuju">
+                                <input type="hidden" class="form-control" name="harga_total2" id="harga_total2">
+                                <input type="hidden" class="form-control" name="jumlah2" id="jumlah2">
+                                <input type="hidden" class="form-control" name="satuan2" id="satuan2">
+                                <input type="hidden" class="form-control" name="bulan_angka" id="bulan_angka">
                                 <button type="submit" class="btn btn-success">Setuju</button>
                             </form>
                             <form id="form_tolak" action="{{ route('perencanaan.tolak', ':id') }}" method="POST" style="display: inline;">
                                 @csrf
+                                <input type="hidden" class="form-control" placeholder="Keterangan" name="keterangantolak" id="keterangantolak">
                                 <button type="submit" class="btn btn-danger">Tolak</button>
                             </form>
 
@@ -204,8 +227,26 @@ $(document).ready(function() {
                     "Januari", "Februari", "Maret", "April", "Mei", "Juni",
                     "Juli", "Agustus", "September", "Oktober", "November", "Desember"
                 ];
+                const monthMap = {
+                    Januari: "01",
+                    Februari: "02",
+                    Maret: "03",
+                    April: "04",
+                    Mei: "05",
+                    Juni: "06",
+                    Juli: "07",
+                    Agustus: "08",
+                    September: "09",
+                    Oktober: "10",
+                    November: "11",
+                    Desember: "12"
+                };
+
                 const monthNumber = response.bulan; // e.g., 1 for Januari
                 const monthName = monthNames[monthNumber - 1]; // Array index starts at 0
+                //const totalPrice = response.harga_satuan * response.jumlah;
+                const defaultTotal = response.harga_satuan * response.jumlah;
+
                 // Fill modal with data
                 $('#tahun_anggaran').val(response.tahun_anggaran);
                 $('#kode_kegiatan').val(response.kode_kegiatan + ' - ' + response.uraian_kegiatan);
@@ -215,10 +256,54 @@ $(document).ready(function() {
                 $('#harga_satuan').val(formatRupiah(response.harga_satuan));
                 $('#jumlah').val(response.jumlah);
                 $('#satuan').val(response.satuan);
-                $('#bulan').val(monthName);
-                $('#harga_total').text(formatRupiah(response.harga_satuan * response.jumlah));
-                $('#form_setuju').attr('action', '/back/perencanaan/setuju/' + id);
-                $('#form_tolak').attr('action', '/back/perencanaan/tolak/' + id);
+                $('#defaultMonth').text(monthName).val(monthNumber);
+                $('#bulanz').val(monthName);
+
+                //$('#bulan_angka').val(monthNumber);
+                // Initial calculation of total price
+                const initialJumlah = Number($('#jumlah').val()) || 0;
+                const initialTotal = response.harga_satuan * initialJumlah;
+
+                $('#harga_total').text(formatRupiah(defaultTotal));
+                $('#harga_total2').val(defaultTotal);
+                $('#jumlah2').val(response.jumlah);
+                $('#jumlah').on('input', function() {
+                    const currentJumlah = Number($(this).val()) || 0;
+                    const newTotal = response.harga_satuan * currentJumlah;
+                    $('#harga_total').text(formatRupiah(newTotal));
+                    $('#harga_total2').val(newTotal);
+                    $('#jumlah2').val(currentJumlah);
+                });
+                $('#satuan2').val(response.satuan);
+                $('#satuan').on('input', function() {
+                    const currentSatuan = $(this).val();
+                    $('#satuan2').val(currentSatuan);
+                });
+                const monthNm = document.getElementById('bulanz').value;
+                const monthNumbr = monthMap[monthNm] || "Invalid month";
+                $('#bulan_angka').val(monthNumber);
+                $('#bulan').on('change', function() {
+                    const selectedMonthNumber = $(this).val();
+                    const selectedMonthName = monthNames[selectedMonthNumber - 1];
+                    $('#defaultMonth').text(selectedMonthName).val(selectedMonthNumber);
+                    $('#bulan_angka').val(selectedMonthNumber);
+
+                });
+
+
+
+                $('#keterangan').val(response.keterangan);
+
+                if(response.status == 1){
+                    $('#form_setuju').hide();
+                    $('#form_tolak').hide();
+                }else{
+                    $('#form_setuju').show();
+                    $('#form_tolak').show();
+                    $('#form_setuju').attr('action', '/back/perencanaan/setuju/' + id);
+                    $('#form_tolak').attr('action', '/back/perencanaan/tolak/' + id);
+                }
+
 
                 // Show the modal
                 $('#DetailModal').modal('show');
@@ -229,7 +314,14 @@ $(document).ready(function() {
         });
     });
 });
-
+    const keterangan = document.getElementById('keterangan');
+    const keterangansetuju = document.getElementById('keterangansetuju');
+    const keterangantolak = document.getElementById('keterangantolak');
+    // Add an event listener to update keterangan2 whenever keterangan changes
+    keterangan.addEventListener('input', function () {
+        keterangansetuju.value = keterangan.value;
+        keterangantolak.value = keterangan.value;
+    });
 </script>
 
 @endsection

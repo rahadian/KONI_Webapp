@@ -54,7 +54,7 @@ class PerencanaanController extends Controller
             $id_cabor = Cabor::select('id')
                             ->where('nama_cabor',$nama_cabor)
                             ->first();
-            $data = Perencanaan::select('cabor.nama_cabor','perencanaan.kode_kegiatan','kegiatan.uraian_kegiatan','perencanaan.kode_rekening','rekening.uraian_rekening','perencanaan.kode_belanja','belanja.uraian_belanja','perencanaan.kode_barang','barang.nama_barang','barang.harga_satuan','bulan','tahun_anggaran','status','created_at','created_by','updated_at')
+            $data = Perencanaan::select('cabor.nama_cabor','perencanaan.kode_kegiatan','kegiatan.uraian_kegiatan','perencanaan.kode_rekening','rekening.uraian_rekening','perencanaan.kode_belanja','belanja.uraian_belanja','perencanaan.kode_barang','barang.nama_barang','barang.harga_satuan','bulan','tahun_anggaran','status','keterangan','created_at','created_by','updated_at')
                     ->Join('cabor','cabor.id','perencanaan.cabor')
                     ->Join('kegiatan','kegiatan.kode_kegiatan','perencanaan.kode_kegiatan')
                     ->Join('rekening','rekening.kode_rekening','perencanaan.kode_rekening')
@@ -103,7 +103,7 @@ class PerencanaanController extends Controller
         $currentYear = date('Y');
         $years = range($currentYear, $currentYear + 5);
 
-        $data = Perencanaan::select('perencanaan.id as id_perencanaan','cabor.nama_cabor','perencanaan.kode_kegiatan','kegiatan.uraian_kegiatan','perencanaan.kode_rekening','rekening.uraian_rekening','perencanaan.kode_belanja','belanja.uraian_belanja','perencanaan.kode_barang','barang.nama_barang','barang.harga_satuan','bulan','tahun_anggaran','status','created_at','created_by','updated_at')
+        $data = Perencanaan::select('perencanaan.id as id_perencanaan','cabor.nama_cabor','perencanaan.kode_kegiatan','kegiatan.uraian_kegiatan','perencanaan.kode_rekening','rekening.uraian_rekening','perencanaan.kode_belanja','belanja.uraian_belanja','perencanaan.kode_barang','barang.nama_barang','barang.harga_satuan','bulan','tahun_anggaran','status','keterangan','created_at','created_by','updated_at')
                 ->Join('cabor','cabor.id','perencanaan.cabor')
                 ->Join('kegiatan','kegiatan.kode_kegiatan','perencanaan.kode_kegiatan')
                 ->Join('rekening','rekening.kode_rekening','perencanaan.kode_rekening')
@@ -165,6 +165,10 @@ class PerencanaanController extends Controller
      */
     public function store(Request $request)
     {
+        $request->merge([
+            'harga_satuan' => str_replace('.', '', $request->input('harga_satuan'))
+
+        ]);
         $validated = $request->validate([
             'id_cabor'      => 'required',
             'kode_kegiatan' => 'required|string|max:255',
@@ -202,24 +206,55 @@ class PerencanaanController extends Controller
 
     }
 
-    public function setuju($id)
+    public function setuju(Request $request,$id)
     {
+        $validated = $request->validate([
+            'keterangansetuju' => 'nullable|string|max:255',
+            'harga_total2'  => 'numeric',
+            'jumlah2'       => 'numeric',
+            'satuan2'       => 'string',
+        ]);
+        $user = Auth::user();
+        $hargasetujui = $validated['harga_total2'];
         $perencanaan = Perencanaan::findOrFail($id);
+        $limitnominal = Limitnominal::where('tahun',$perencanaan->tahun_anggaran)
+                        ->first();
+        $bulan_perencanaan = $perencanaan->bulan;
+        if($bulan_perencanaan >= 1 && $bulan_perencanaan <= 6){
+            $limitnominal->semester1 -= $hargasetujui;
+        }
+        if($bulan_perencanaan >= 7 && $bulan_perencanaan <= 12){
+            $limitnominal->semester2 -= $hargasetujui;
+        }
+        $limitnominal->nominal_terpakai = $limitnominal->nominal - ($limitnominal->semester1 + $limitnominal->semester2 + $limitnominal->terpakai );
+        $limitnominal->nominal_sisa = $limitnominal->nominal - ($limitnominal->nominal - ($limitnominal->semester1 + $limitnominal->semester2 + $limitnominal->terpakai ));
+        $limitnominal->update();
 
-        // Update status to 1 (Setuju)
         $perencanaan->status = 1;
+        $perencanaan->keterangan = $validated['keterangansetuju']?? null;
+        $perencanaan->verified_by = $user->username;
+        $perencanaan->jumlah = $validated['jumlah2'];
+        $perencanaan->satuan = $validated['satuan2'];
         $perencanaan->save();
 
         return redirect()->route('perencanaan.verifikasi')->with('status', 'Pengajuan Disetujui.');
     }
 
-    public function tolak($id)
+    public function tolak(Request $request,$id)
     {
+        $validated = $request->validate([
+            'keterangantolak' => 'string|max:255',
+        ]);
+        $idz = Auth::id();
+        $user = \App\Models\User::where('id', $idz)->first();
         $perencanaan = Perencanaan::findOrFail($id);
 
         // Update status to 2 (Tolak)
         $perencanaan->status = 2;
+        $perencanaan->keterangan = $validated['keterangantolak']?? null;
+        $perencanaan->verified_by = $user->username;
         $perencanaan->save();
+        // $perencanaan->save();
 
         return redirect()->route('perencanaan.verifikasi')->with('status', 'Pengajuan Ditolak.');
     }
@@ -273,7 +308,7 @@ class PerencanaanController extends Controller
     public function getBudgetLimit($year)
     {
         $limit = LimitNominal::where('tahun', $year)
-            ->select('nominal','nominal_sisa','nominal_terpakai')
+            ->select('nominal','nominal_sisa','nominal_terpakai','semester1','semester2')
             ->first();
 
         if (!$limit) {

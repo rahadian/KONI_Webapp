@@ -12,6 +12,7 @@ use App\Models\Rekening;
 use App\Models\Belanja;
 use App\Models\Barang;
 use App\Models\LimitNominal;
+use App\Models\PeriodeTahun;
 use Validator;
 use Auth;
 use Session;
@@ -48,8 +49,11 @@ class BelanjaBarjasController extends Controller
             11 => 'November',
             12 => 'Desember'
         ];
-        $currentYear = date('Y');
-        $years = range($currentYear, $currentYear + 5);
+        $currentYear = PeriodeTahun::select('tahun')
+                        ->where('status','=',1)
+                        ->first();
+        // $currentYear = date('Y')+1;
+        $years = range($currentYear->tahun, $currentYear->tahun + 5);
         if($user->role=="cabor"){
             $nama_cabor = $user->cabor;
             $id_cabor = Cabor::select('id')
@@ -61,13 +65,13 @@ class BelanjaBarjasController extends Controller
                                     ->Join('barang','barang.kode_barang','perencanaan.kode_barang')
                                     ->where('cabor', $id_cabor->id)
                                     ->where('bulan', $key)
-                                    ->where('tahun_anggaran',$currentYear)
+                                    ->where('tahun_anggaran',$currentYear->tahun)
                                     ->where('status', 1)
                                     ->get();
                 $monthData = BelanjaBarjas::select('belanja_barjas.*','perencanaan.kode_barang','perencanaan.cabor as cabor','barang.nama_barang','barang.harga_satuan','barang.kode_barang')
                         ->Join('perencanaan','perencanaan.id','belanja_barjas.id_perencanaan')
                         ->Join('barang','barang.kode_barang','perencanaan.kode_barang')
-                        ->where('tanggal_transaksi','LIKE',"$currentYear-$monthNumber%")
+                        ->where('tanggal_transaksi','LIKE',"$currentYear->tahun-$monthNumber%")
                         ->where('cabor',$id_cabor->id)
                         ->where('status',1)
                         ->orderBy('created_at','DESC')
@@ -95,6 +99,76 @@ class BelanjaBarjasController extends Controller
         }
         }
     }
+
+    private function getPerencanaanData($cabor_id, $requestKey)
+        {
+            return Perencanaan::select(
+                'perencanaan.jumlah',
+                'barang.nama_barang',
+                'barang.harga_satuan',
+                'barang.kode_barang',
+                DB::raw('SUM(belanja_barjas.jumlah) as jumlah_belanja')
+            )
+            ->join('barang', 'barang.kode_barang', '=', 'perencanaan.kode_barang')
+            ->leftJoin('belanja_barjas', 'belanja_barjas.id_perencanaan', '=', 'perencanaan.id')
+            ->where('cabor', $cabor_id)
+            ->where('perencanaan.id', $requestKey)
+            ->where('tahun_anggaran', date('Y')+1)
+            ->where('status', 1)
+            ->groupBy(
+                'perencanaan.jumlah',
+                'barang.nama_barang',
+                'barang.harga_satuan',
+                'barang.kode_barang'
+            )
+            ->get();
+        }
+
+    public function check_jumlah_barang($requestKey)
+    {
+        $id = Auth::id();
+        $user = \App\Models\User::find($id); // Using find() is more efficient than where()->first()
+
+        // dd($user);
+        // die();
+
+        if (!$user) {
+            return response()->json(['error' => 'User not found'], 404);
+        }
+
+        if (!$user->cabor) {
+            return response()->json(['error' => 'User has no associated cabor'], 404);
+        }
+
+        $id_cabor = Cabor::where('nama_cabor', $user->cabor)->first();
+
+        if (!$id_cabor) {
+            return response()->json(['error' => 'Cabor not found'], 404);
+        }
+
+        $perencanaan = $this->getPerencanaanData($id_cabor->id, $requestKey);
+
+        if ($perencanaan->isEmpty()) {
+            return response()->json(['error' => 'No planning data found'], 404);
+        }
+
+        $data = $perencanaan->map(function ($item) {
+            $jumlah_belanja = $item->jumlah_belanja ?? 0;
+            $remaining = $item->jumlah - $jumlah_belanja;
+
+            return [
+                'nama_barang' => $item->nama_barang,
+                'kode_barang' => $item->kode_barang,
+                'harga_satuan' => $item->harga_satuan,
+                'jumlah' => $item->jumlah,
+                'jumlah_belanja' => $jumlah_belanja,
+                'remaining' => $remaining
+            ];
+        });
+
+        return response()->json(['data' => $data]);
+    }
+
 
     /**
      * Show the form for creating a new resource.
@@ -137,8 +211,12 @@ class BelanjaBarjasController extends Controller
                 11 => 'November',
                 12 => 'Desember'
             ];
-            $currentYear = date('Y');
-            $years = range($currentYear, $currentYear + 5);
+            $currentYear = PeriodeTahun::select('tahun')
+                        ->where('status','=',1)
+                        ->first();
+            // $currentYear = date('Y');
+            // $years = range($currentYear, $currentYear + 5);
+            $years = range($currentYear->tahun, $currentYear->tahun + 5);
             // Get user and cabor info
             $idz = Auth::id();
             $user = \App\Models\User::where('id', $idz)->first();
@@ -184,8 +262,12 @@ class BelanjaBarjasController extends Controller
         }
 
         // Validate year and month
-        $currentYear = date('Y');
-        if ($year < 2020 || $year > $currentYear + 5 || $month < 1 || $month > 12) {
+        $currentYear = PeriodeTahun::select('tahun')
+                        ->where('status','=',1)
+                        ->first();
+        // $currentYear = date('Y');
+        // if ($year < 2020 || $year > $currentYear + 5 || $month < 1 || $month > 12) {
+        if ($year < 2020 || $year > $currentYear->tahun + 5 || $month < 1 || $month > 12) {
             return redirect()->route('cmshome.index')
                 ->with(['error' => 'Invalid date parameters']);
         }
@@ -227,7 +309,7 @@ class BelanjaBarjasController extends Controller
         )
         ->join('perencanaan', 'perencanaan.id', 'belanja_barjas.id_perencanaan')
         ->join('barang', 'barang.kode_barang', 'perencanaan.kode_barang')
-        ->where('tanggal_transaksi', 'LIKE', "$currentYear-$monthNumber%")
+        ->where('tanggal_transaksi', 'LIKE', "$currentYear->tahun-$monthNumber%")
         ->where('perencanaan.cabor', $id_cabor->id)
         ->orderBy('belanja_barjas.created_at', 'DESC')
         ->paginate(10);
