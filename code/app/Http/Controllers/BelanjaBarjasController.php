@@ -302,8 +302,10 @@ class BelanjaBarjasController extends Controller
         //     ->get();
         $data = BelanjaBarjas::select(
             'belanja_barjas.*',
+            'perencanaan.id as  ',
             'perencanaan.kode_barang',
             'perencanaan.cabor',
+            'perencanaan.jumlah as jumlah_perencanaan',
             'barang.nama_barang',
             'barang.harga_satuan'
         )
@@ -314,6 +316,14 @@ class BelanjaBarjasController extends Controller
         ->orderBy('belanja_barjas.created_at', 'DESC')
         ->paginate(10);
 
+        $perencanaan = Perencanaan::select('perencanaan.*','barang.nama_barang','barang.harga_satuan','barang.kode_barang')
+                                    ->Join('barang','barang.kode_barang','perencanaan.kode_barang')
+                                    ->where('cabor', $id_cabor->id)
+                                    ->where('bulan', $month)
+                                    ->where('tahun_anggaran',$currentYear->tahun)
+                                    ->where('status', 1)
+                                    ->get();
+
 
         return view('back.belanja_barjas.detail', compact(
             'page',
@@ -322,7 +332,8 @@ class BelanjaBarjasController extends Controller
             'months',
             'month',
             'year',
-            'data'
+            'data',
+            'perencanaan',
         ));
     }
 
@@ -334,7 +345,36 @@ class BelanjaBarjasController extends Controller
      */
     public function edit($id)
     {
-        //
+        $page = 'Ubah Belanja Barang Jasa';
+
+        $id = Auth::id();
+        $user =\App\Models\User::where('id',$id)
+                    ->first();
+        $months = [
+            1 => 'Januari',
+            2 => 'Februari',
+            3 => 'Maret',
+            4 => 'April',
+            5 => 'Mei',
+            6 => 'Juni',
+            7 => 'Juli',
+            8 => 'Agustus',
+            9 => 'September',
+            10 => 'Oktober',
+            11 => 'November',
+            12 => 'Desember'
+        ];
+        $currentYear = PeriodeTahun::select('tahun')
+                        ->where('status','=',1)
+                        ->first();
+
+        $data =  Perencanaan::select('perencanaan.*','barang.nama_barang','barang.harga_satuan','barang.kode_barang')
+                                    ->Join('barang','barang.kode_barang','perencanaan.kode_barang')
+                                    ->where('cabor', $id_cabor->id)
+                                    ->where('bulan', $key)
+                                    ->where('tahun_anggaran',$currentYear->tahun)
+                                    ->where('status', 1)
+                                    ->get();
     }
 
     /**
@@ -346,7 +386,59 @@ class BelanjaBarjasController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $request->validate([
+            'id_perencanaan' => 'required|exists:perencanaan,id',
+            'tanggal_transaksi' => 'required|date',
+            'jumlah' => 'required|numeric|min:1',
+            'detail' => 'required|string',
+            'pajak' => 'required|string',
+        ]);
+
+        try {
+            $months = [
+                1 => 'Januari',
+                2 => 'Februari',
+                3 => 'Maret',
+                4 => 'April',
+                5 => 'Mei',
+                6 => 'Juni',
+                7 => 'Juli',
+                8 => 'Agustus',
+                9 => 'September',
+                10 => 'Oktober',
+                11 => 'November',
+                12 => 'Desember'
+            ];
+            $currentYear = PeriodeTahun::select('tahun')
+                        ->where('status','=',1)
+                        ->first();
+            // $currentYear = date('Y');
+            // $years = range($currentYear, $currentYear + 5);
+            $years = range($currentYear->tahun, $currentYear->tahun + 5);
+            // Get user and cabor info
+            $idz = Auth::id();
+            $user = \App\Models\User::where('id', $idz)->first();
+            $id_cabor = Cabor::select('id')
+                            ->where('nama_cabor', $user->cabor)
+                            ->first();
+
+            $dt = BelanjaBarjas::where('id',$id)
+                            ->where('id_perencanaan',$request->id_perencanaan)
+                            ->first();
+            $dt->tanggal_transaksi = $request->tanggal_transaksi;
+            $dt->jumlah = $request->jumlah;
+            $dt->total_harga = $request->jumlah * $request->harga_satuan;
+            $dt->detail = $request->detail;
+            $dt->pajak = $request->pajak;
+            $dt->updated_by = $user->username;
+            $dt->update();
+            return redirect()->back()->with('status', 'Data belanja berhasil diubah');
+
+        } catch (\Exception $e) {
+            return redirect()->back()
+                            ->with('error', 'Terjadi kesalahan: ' . $e->getMessage())
+                            ->withInput();
+        }
     }
 
     /**
@@ -357,6 +449,8 @@ class BelanjaBarjasController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $dt = BelanjaBarjas::findOrFail($id);
+        $dt->delete();
+        return redirect()->back()->with('status','Data Berhasil dihapus');
     }
 }

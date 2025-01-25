@@ -27,7 +27,7 @@
                     @endif
 
                     <div class="d-flex justify-content-between align-items-center">
-                    <h2>{{ $currentYear->tahun }}</h2>
+                    <h2>{{ $currentYear->tahun }} - {{ $nama_cabor }}</h2>
                     </div>
                 </div>
 
