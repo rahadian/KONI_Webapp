@@ -9,11 +9,11 @@
 <!-- Open Graph meta tags -->
 <meta property="og:title" content="KONI Kabupaten Probolinggo">
 <meta property="og:description" content="KONI Kabupaten Probolinggo">
-<meta property="og:image" content="{{ asset('img/logo_koni.png') }}">
+<meta property="og:image" content="{{ asset('img/logo_koni_kab.png') }}">
 <meta property="og:url" content="{{ url()->current() }}">
 <meta property="og:type" content="website">
 
-<link rel="icon" type="image/png" href="{{ asset('img/logo_koni.png') }}">
+<link rel="icon" type="image/png" href="{{ asset('img/logo_koni_kab.png') }}">
 @if($page != "KONI Kabupaten Probolinggo")
 <title>KONI Kab.Probolinggo - {{ $page }}</title>
 @else
@@ -26,9 +26,14 @@
 
 <body>
 <div id="loading">
-    <div class="spinner"></div>
+    {{-- <div class="spinner"></div> --}}
+    <l-quantum
+    size="55"
+    speed="1.8"
+    color="black"
+    ></l-quantum>
 </div>
-  <div id="header_nav" class="header pb-2" style="background-color: #f06236;">
+  <div id="header_nav" class="header pb-2" style="background-color: #70C7D6;">
     <div class="container pb-2">
         <div class="row align-items-start">
             <!-- <div class="col-lg-9 fw-bold"><font color="#ffffff" face="arial,helvetica">
@@ -47,10 +52,10 @@
     <!--container-->
   </div>
   <!-- Navbar -->
-  <nav class="navbar navbar-expand-sm navbar-dark sticky-top" style="height:80px; background-color: #f06236;">
+  <nav class="navbar navbar-expand-sm navbar-dark sticky-top" style="height:80px; background-color: #70C7D6;">
     <div class="container">
       <!-- <div id="currentDate" class="top-bar text-center text-white bg-dark py-2 d-none d-lg-block"></div> -->
-      <a class="navbar-brand" href="{{ route('home') }}"><img loading="lazy" src="{{ asset('img/KONILOGO_putih.png') }}" style="height: 65px;"></a>
+      <a class="navbar-brand" href="{{ route('home') }}"><img loading="lazy" src="{{ asset('img/KONILOGO_hitam.png') }}" style="height: 65px;"></a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -61,7 +66,7 @@
           @else
           <li class="nav-item">
           @endif
-            <a class="nav-link" href="{{ route('home') }}"><i class="fas fa-home"></i><b> BERANDA</b></a>
+            <a class="nav-link" href="{{ route('home') }}"><b> BERANDA</b></a>
           </li>
           @if($page=="SAKIP"||$page=="Struktur Organisasi"||$page=="Dasar Hukum")
           <li class="nav-item dropdown active show-dropdown"> <!-- Add 'dropdown' class to this list item -->
@@ -106,32 +111,23 @@
             <div class="col-12">
                 <div id="newsCarousel" class="carousel slide" data-ride="carousel">
                     <ol class="carousel-indicators">
-                        <li data-target="#newsCarousel" data-slide-to="0" class="active"></li>
-                        <li data-target="#newsCarousel" data-slide-to="1"></li>
-                        <li data-target="#newsCarousel" data-slide-to="2"></li>
+                        @foreach($pinned as $key => $pin)
+                        <li data-target="#newsCarousel" data-slide-to="{{ $key }}" class="{{ $loop->first ? 'active' : '' }}"></li>
+                        @endforeach
                     </ol>
                     <div class="carousel-inner">
-                        <div class="carousel-item active">
-                            <img src="{{ asset('img/endlessprob.jpg') }}" class="d-block w-100" alt="News 1">
-                            <div class="carousel-caption d-none d-md-block">
-                                <h3>Judul Berita</h3>
-                                <p>Brief description of news 1</p>
+                        @foreach($pinned as $pinned)
+                        <div class="carousel-item @if($loop->first) active @endif">
+                            <div class="carousel-image-container">
+                                <img src="{{ asset('uploads/'.$pinned->image) }}" loading="lazy" class="d-block carousel-img" alt="{{ $pinned->judul }}" style="width:100%">
+                            </div>
+                            <div class="carousel-caption d-md-block">
+                                <h3>{{ Str::limit($pinned->judul,90) }}</h3>
+                                {{-- <p>{!! Str::limit(strip_tags($pinned->content), 90 , ' ...') !!}</p> --}}
+                                <a href="{{ route('berita.show',[$pinned->slug_judul]) }}" class="btn btn-primary">Selengkapnya</a>
                             </div>
                         </div>
-                        <div class="carousel-item">
-                            <img src="{{ asset('img/news/news2.jpg') }}" class="d-block w-100" alt="News 2">
-                            <div class="carousel-caption d-none d-md-block">
-                                <h3>Latest News Title 2</h3>
-                                <p>Brief description of news 2</p>
-                            </div>
-                        </div>
-                        <div class="carousel-item">
-                            <img src="{{ asset('img/news/news3.jpg') }}" class="d-block w-100" alt="News 3">
-                            <div class="carousel-caption d-none d-md-block">
-                                <h3>Latest News Title 3</h3>
-                                <p>Brief description of news 3</p>
-                            </div>
-                        </div>
+                        @endforeach
                     </div>
                     <a class="carousel-control-prev" href="#newsCarousel" role="button" data-slide="prev">
                         <span class="carousel-control-prev-icon" aria-hidden="true"></span>

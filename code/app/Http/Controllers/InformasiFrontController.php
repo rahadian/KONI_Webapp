@@ -25,6 +25,11 @@ class InformasiFrontController extends Controller
         $data = Informasi::where("slug_judul",$slug)
                         ->first();
         $page = $data->judul;
+        $pinned = Informasi::orderBy('created_at','DESC')
+                    ->where('kategori','Pinned')
+                    ->where('status','publish')
+                    ->limit(3)
+                    ->get();
         $totalberita = Informasi::orderBy('created_at','DESC')
                     ->where('status','publish')
                     ->where('kategori','Berita')
@@ -42,6 +47,7 @@ class InformasiFrontController extends Controller
         return view('front.detail_informasi',[
             'page'=>$page,
             'data'=>$data,
+            'pinned'=>$pinned,
             'totalberita'=>$totalberita,
             'totalpengumuman'=>$totalpengumuman,
             'beritalain'=>$beritalain,

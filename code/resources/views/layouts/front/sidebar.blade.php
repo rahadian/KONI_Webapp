@@ -57,7 +57,7 @@
 </style>
 <div class="col-md-4">
         <!-- Sidebar -->
-        <div class="card mb-4">
+        {{-- <div class="card mb-4">
           <div class="card-header">
             Kategori
           </div>
@@ -65,10 +65,18 @@
             <li class="list-group-item"><a href="{{ route('berita.show_all') }}">Berita({{ $totalberita }})</a></li>
             <li class="list-group-item"><a href="{{ route('pengumuman.show_all') }}">Pengumuman({{ $totalpengumuman }})</a></li>
           </ul>
+        </div> --}}
+        <div class="kategori-container">
+            <span class="kategori-title">Kategori</span>
+            <span class="kategori-line"></span>
         </div>
-
-        <div class="card mb-4" style="height:590px">
-          <div class="card-header">
+        <ul class="kategori-list">
+            <li><a href="{{ route('berita.show_all') }}">Berita ({{ $totalberita }})</a></li>
+            <li><a href="{{ route('pengumuman.show_all') }}">Pengumuman ({{ $totalpengumuman }})</a></li>
+        </ul>
+        <br>
+        <div class="card mb-4" style="height:590px;">
+          <div class="card-header" style="background-color: #70C7D6;">
             Info Kabupaten Probolinggo
           </div>
           <div class="card-body" id="fb_prob">
@@ -78,7 +86,7 @@
         </div>
 
         <div class="card mb-4" style="height:670px">
-        <div class="card-header">
+        <div class="card-header" style="background-color: #70C7D6;">
             Government Public Relations (GPR)
         </div>
           <div class="card-body">

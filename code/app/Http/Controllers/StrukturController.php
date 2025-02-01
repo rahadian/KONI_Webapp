@@ -15,6 +15,11 @@ class StrukturController extends Controller
     public function index()
     {
         $page = "Struktur Organisasi";
+        $pinned = Informasi::orderBy('created_at','DESC')
+                    ->where('kategori','Pinned')
+                    ->where('status','publish')
+                    ->limit(3)
+                    ->get();
         $totalberita = Informasi::orderBy('created_at','DESC')
                     ->where('status','publish')
                     ->where('kategori','Berita')
@@ -25,6 +30,7 @@ class StrukturController extends Controller
                     ->count();
         return view('front.struktur',[
             'page'=>$page,
+            'pinned'=>$pinned,
             'totalberita'=>$totalberita,
             'totalpengumuman'=>$totalpengumuman,
         ]);

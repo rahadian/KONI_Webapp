@@ -61,17 +61,7 @@
                 {{$informasi->appends(Request::all())->links("pagination::bootstrap-4")}}
             </div>
         </nav>
-        <div class="section-heading">
-        <span class="section-title">
-            <b>Sosial Media <i class="fab fa-instagram"></i></b>
-        </span>
-        </div>
-        <div id="instagram-widget" class="instagram-widget"></div>
-        <div class="pagination-ig">
-        <button id="prev-page" class="pagination-btn">Previous<span class="loading-spinner"></span></button>
-        <button id="next-page" class="pagination-btn">Next<span class="loading-spinner"></span></button>
-        </div><br>
-        <script src={{ asset('js/igwidget.js') }}></script>
+
 
         {{-- <!-- Place <div> tag where you want the feed to appear -->
         <div id="curator-feed-default-feed-layout"><a href="https://curator.io" target="_blank" class="crt-logo crt-tag">Powered by Curator.io</a></div>
@@ -87,22 +77,7 @@
         </script> --}}
 
       </div>
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-  const embedInstagramFeed = document.querySelector('embed-instagram-feed');
 
-  if (embedInstagramFeed && embedInstagramFeed.shadowRoot) {
-    const titleElement = embedInstagramFeed.shadowRoot.querySelector('div.nc-title');
-    if (titleElement) {
-      titleElement.remove();
-    }
-    const subtitleElement = embedInstagramFeed.shadowRoot.querySelector('p.nc-subtitle');
-    if (subtitleElement){
-        subtitleElement.remove();
-    }
-  }
-});
-    </script>
   @include('layouts.front.sidebar')
   @include('layouts.front.footer')
 @endsection

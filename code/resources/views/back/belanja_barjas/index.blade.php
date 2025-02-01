@@ -62,7 +62,7 @@
                                         <span aria-hidden="true">&times;</span>
                                     </button>
                                 </div>
-                                <form action="{{ route('belanja.store') }}" method="POST">
+                                <form action="{{ route('belanjabarjas.store') }}" method="POST">
                                     @csrf
                                     <div class="modal-body">
                                         <input type="hidden" name="month" value="{{$key}}">

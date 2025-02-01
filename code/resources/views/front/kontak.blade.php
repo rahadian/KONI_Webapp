@@ -42,9 +42,9 @@
                 <div class="card text-center" style="height: 155px;">
                     <div class="card-body">
                         <h4 class="card-title mb-3 mt-2">
-                            <i class="fa fa-map-marker-alt me-2 text-info"></i> Alamat
+                            <i class="fas fa-map-marker-alt me-2 text-info"></i> Alamat
                         </h4>
-                        <p class="card-text" style="font-size: 12px;">JL.RAYA PANGLIMA SUDIRMAN KOTA PROBOLINGGO</p>
+                        <p class="card-text"> JL. SUROYO NO. 49 KOTA PROBOLINGGO</p>
                     </div>
                 </div>
             </div>
@@ -54,7 +54,7 @@
                         <h4 class="card-title mb-3 mt-2">
                             <i class="fa fa-phone me-2 text-info"></i> Telpon
                         </h4>
-                        <p class="card-text" style="font-size: 15px;">+62 335 12345 </p>
+                        <p class="card-text">085331728955</p>
                     </div>
                 </div>
             </div>
@@ -64,12 +64,12 @@
                         <h4 class="card-title mb-3 mt-2">
                             <i class="fa fa-envelope me-2 text-info"></i> Email
                         </h4>
-                        <p class="card-text" style="font-size: 12px;">info@koni </p>
+                        <p class="card-text">konikabprobolinggo@gmail.com </p>
                     </div>
                 </div>
             </div>
             <div class="embed-responsive embed-responsive-16by9" style="margin-top:50px">
-           <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4849.015491453815!2d113.21168607500462!3d-7.753985992264934!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd7ad97c7317dab%3A0xe0ad979f66de102d!2sProbolinggo%20Mayor&#39;s%20Office!5e1!3m2!1sen!2sid!4v1736917539785!5m2!1sen!2sid" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+           <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3953.4078342844286!2d113.2132027758418!3d-7.746493092272196!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd7adbfe1acd2c9%3A0x972ba97488a1e7c!2sJl.%20Suroyo%20No.49%2C%20Tisnonegaran%2C%20Kec.%20Kanigaran%2C%20Kota%20Probolinggo%2C%20Jawa%20Timur%2067219!5e0!3m2!1sen!2sid!4v1738367048353!5m2!1sen!2sid" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
             </div>
         </div>
       </div>

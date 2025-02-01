@@ -51,7 +51,7 @@
             <img data-enlargeable width="100" style="cursor: zoom-in" id="struktur_organisasi" src="{{ asset('img/struktur.jpeg') }}">
 
         </div>
-         <h2>Pejabat Dinas</h2><br>
+         <h2>Pengurus KONI Kabupaten Probolinggo</h2><br>
         <div class="row">
             <div class="col-sm-4" style="margin-bottom:20px">
                 <div class="card card_app text-center" style="height: 300px">

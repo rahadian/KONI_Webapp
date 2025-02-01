@@ -15,6 +15,11 @@ class KontakController extends Controller
     public function index()
     {
         $page = "Kontak Kami";
+        $pinned = Informasi::orderBy('created_at','DESC')
+                    ->where('kategori','Pinned')
+                    ->where('status','publish')
+                    ->limit(3)
+                    ->get();
         $totalberita = Informasi::orderBy('created_at','DESC')
                     ->where('status','publish')
                     ->where('kategori','Berita')
@@ -25,6 +30,7 @@ class KontakController extends Controller
                     ->count();
         return view('front.kontak',[
             'page'=>$page,
+            'pinned'=>$pinned,
             'totalberita'=>$totalberita,
             'totalpengumuman'=>$totalpengumuman,
         ]);

@@ -141,9 +141,9 @@
                     <span class="nav-link-text ms-1">Perencanaan</span>
                     </a>
                     @if($page=='Belanja Barang Jasa')
-                    <a class="nav-link active" href="{{ route('belanja.index') }}">
+                    <a class="nav-link active" href="{{ route('belanjabarjas.index') }}">
                     @else
-                    <a class="nav-link" href="{{ route('belanja.index') }}">
+                    <a class="nav-link" href="{{ route('belanjabarjas.index') }}">
                     @endif
                     <span class="nav-link-text ms-1">Belanja</span>
                     </a>
@@ -221,6 +221,15 @@
                 <a class="nav-link" href="{{ route('limit_nominal.index') }}">
                 @endif
                 <span class="nav-link-text ms-1">Limit Nominal</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                @if($page=='Data Inventaris')
+                <a class="nav-link active" href="{{ route('kegiatan.index') }}">
+                @else
+                <a class="nav-link" href="{{ route('kegiatan.index') }}">
+                @endif
+                <span class="nav-link-text ms-1">Data Inventaris</span>
                 </a>
             </li>
             </ul>

@@ -84,7 +84,7 @@
                                                            <span aria-hidden="true">&times;</span>
                                                        </button>
                                                    </div>
-                                                   <form action="{{ route('belanja.update', $item->id) }}" method="POST">
+                                                   <form action="{{ route('belanjabarjas.update', $item->id) }}" method="POST">
                                                        @csrf
                                                        @method('PUT')
                                                        <div class="modal-body">
@@ -155,7 +155,7 @@
                            </table>
                        </div>
                    </div>
-                   <a href="{{ route('belanja.index') }}" class="btn btn-danger btn-fill pull-left">Kembali</a>
+                   <a href="{{ route('belanjabarjas.index') }}" class="btn btn-danger btn-fill pull-left">Kembali</a>
                </div>
            </div>
        </div>
