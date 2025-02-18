@@ -57,6 +57,7 @@
           </a>
         </li>
         <!-- Cabor Submenu -->
+        @if(Auth::user()->role=="admin"||Auth::user()->role=="cabor"||Auth::user()->role=="staff")
         <li class="nav-item">
           @if(in_array($page, ['Pengurus Cabor', 'Pelatih Cabor', 'Atlit Cabor', 'Prestasi Cabor']))
             <a class="nav-link active" data-bs-toggle="collapse" href="#caborSubmenu" role="button" aria-expanded="true" aria-controls="caborSubmenu">
@@ -107,6 +108,15 @@
                     <span class="nav-link-text">Prestasi Cabor</span>
                   </a>
                 </li>
+                <li class="nav-item">
+                  @if($page=='Club Cabor')
+                    <a class="nav-link active" href="{{ route('club_cabor.index') }}">
+                  @else
+                    <a class="nav-link" href="{{ route('club_cabor.index') }}">
+                  @endif
+                    <span class="nav-link-text">Club Cabor</span>
+                  </a>
+                </li>
                 {{-- @if(Auth::user()->role=="cabor")
                 <li class="nav-item">
                   @if($page=='Perencanaan')
@@ -121,7 +131,9 @@
               </ul>
             </div>
         </li>
+        @endif
 
+        @if(Auth::user()->role=="admin"||Auth::user()->role=="cabor"||Auth::user()->role=="staff")
         <li class="nav-item">
         <a class="nav-link" data-bs-toggle="collapse" href="#keuanganSubmenu" role="button" aria-expanded="false" aria-controls="keuanganSubmenu">
             <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
@@ -132,7 +144,7 @@
         <div class="collapse" id="keuanganSubmenu">
             <ul class="nav ms-4">
             <li class="nav-item">
-                @if(Auth::user()->role=="cabor")
+                @if(Auth::user()->role=="cabor"||Auth::user()->role=="staff")
                     @if($page=='Perencanaan')
                     <a class="nav-link active" href="{{ route('perencanaan.index') }}">
                     @else
@@ -150,9 +162,9 @@
                  @endif
                   @if(Auth::user()->role=="admin")
                     @if($page=='Verifikasi Perencanaan')
-                    <a class="nav-link active" href="{{ route('perencanaan.verifikasi') }}">
+                    <a class="nav-link active" href="{{ route('verifikasi_perencanaan.index') }}">
                     @else
-                    <a class="nav-link" href="{{ route('perencanaan.verifikasi') }}">
+                    <a class="nav-link" href="{{ route('verifikasi_perencanaan.index') }}">
                     @endif
                     <span class="nav-link-text ms-1">Verifikasi Perencanaan</span>
                     </a>
@@ -161,8 +173,9 @@
             </ul>
         </div>
         </li>
+        @endif
 
-        @if(Auth::user()->role=="admin")
+        @if(Auth::user()->role=="admin"||Auth::user()->role=="media")
         <li class="nav-item">
         <a class="nav-link" data-bs-toggle="collapse" href="#informasiSubmenu" role="button" aria-expanded="false" aria-controls="informasiSubmenu">
             <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
@@ -224,10 +237,12 @@
                 </a>
             </li>
             <li class="nav-item">
-                @if($page=='Data Inventaris')
-                <a class="nav-link active" href="{{ route('kegiatan.index') }}">
+                @if($page=='Data Inventaris Barang')
+                {{-- <a class="nav-link active" href="{{ route('kegiatan.index') }}"> --}}
+                <a class="nav-link active" href="{{ route('ket_barang.index') }}">
                 @else
-                <a class="nav-link" href="{{ route('kegiatan.index') }}">
+                {{-- <a class="nav-link" href="{{ route('kegiatan.index') }}"> --}}
+                <a class="nav-link" href="{{ route('ket_barang.index') }}">
                 @endif
                 <span class="nav-link-text ms-1">Data Inventaris</span>
                 </a>

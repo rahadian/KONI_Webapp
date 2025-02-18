@@ -1,6 +1,5 @@
 @extends('layouts.back.header')
 @section('title') Data Perencanaan @endsection
-<meta name="csrf-token" content="{{ csrf_token() }}">
 @section('content')
 <div class="container-fluid py-4">
     <div class="row">
@@ -28,26 +27,11 @@
                     @endif
 
                     <div class="d-flex justify-content-between align-items-center">
-                        <div>
                         <h6 class="mb-0">Data Perencanaan</h6>
-                        @if($check_pengajuan)
-                            <span class="badge
-                                {{ $check_pengajuan->status == 1 ? 'bg-success' : ($check_pengajuan->status == 2 ? 'bg-danger' : 'bg-warning') }}">
-                                {{ $check_pengajuan->status == 1 ? 'Pengajuan Disetujui' : ($check_pengajuan->status == 2 ? 'Pengajuan Direvisi: '. $check_pengajuan->catatan :'Pengajuan Belum Diverifikasi') }}
-                            </span>
-                        @endif
-                        </div>
-                        @if(Auth::user()->role == "cabor"||Auth::user()->role == "staff")
-                            <div>
-                            @if(!$check_pengajuan || ($check_pengajuan->status ?? null) == 2)
+                        @if(Auth::user()->role == "cabor")
                             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addBudgetModal">
                                 <i class="fa fa-plus"></i> Tambah Data
                             </button>
-                            <button type="button" id="ajukanPerencanaanBtn" class="btn btn-warning" data-tahun="{{ $year_periode->tahun }}" data-cabor="{{ $nama_cabor }}">Ajukan Perencanaan</button>
-                            @elseif($check_pengajuan->status==1)
-                            <button id="detail-button" class="btn btn-primary">RINCIAN KERTAS KERJA</button>
-                            @endif
-                            </div>
                         @endif
                     </div>
                 </div>
@@ -60,15 +44,16 @@
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">No</th>
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Nama Cabor</th>
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Kegiatan</th>
-                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Kode Barang</th>
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Rekening</th>
-                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Nama Barang</th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Belanja</th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Barang</th>
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Harga Satuan</th>
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Bulan</th>
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Tahun</th>
-                                    {{-- <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Status</th> --}}
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Status</th>
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Created at</th>
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Updated at</th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Updated by</th>
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Action</th>
                                 </tr>
                             </thead>
@@ -82,32 +67,30 @@
                                     </td>
                                     <td><span class="text-secondary text-xs">{{ $dt->nama_cabor }}</span></td>
                                     <td><span class="text-secondary text-xs">{{ $dt->kode_kegiatan }} - {{ $dt->uraian_kegiatan }}</span></td>
-                                    <td><span class="text-secondary text-xs">{{ $dt->kode_ketbarang }} - {{ $dt->ket_barang }}</span></td>
-                                    <td><span class="text-secondary text-xs">{{ $dt->kode_rekening }} - {{ $dt->ket_rekening }}</span></td>
-                                    <td><span class="text-secondary text-xs">{{ $dt->nama_barang }}</span></td>
+                                    <td><span class="text-secondary text-xs">{{ $dt->kode_rekening }} - {{ $dt->uraian_rekening }}</span></td>
+                                    <td><span class="text-secondary text-xs">{{ $dt->kode_belanja }} - {{ $dt->uraian_belanja }}</span></td>
+                                    <td><span class="text-secondary text-xs">{{ $dt->kode_barang }} - {{ $dt->nama_barang }}</span></td>
                                     <td><span class="text-secondary text-xs">Rp {{ number_format($dt->harga_satuan, 0, ',', '.') }}</span></td>
                                     <td><span class="text-secondary text-xs">{{ $dt->bulan }}</span></td>
                                     <td><span class="text-secondary text-xs">{{ $dt->tahun_anggaran }}</span></td>
-                                    {{-- <td>
+                                    <td>
                                         <span class="badge
                                             {{ $dt->status == 1 ? 'bg-success' : ($dt->status == 2 ? 'bg-danger' : 'bg-warning') }}">
                                             {{ $dt->status == 1 ? 'Disetujui' : ($dt->status == 2 ? 'Ditolak' : 'Belum Diverifikasi') }}
                                         </span>
-                                    </td> --}}
+                                    </td>
                                     <td class="text-center"><span class="text-secondary text-xs">{{ $dt->created_at }}</span></td>
                                     <td class="text-center"><span class="text-secondary text-xs">{{ $dt->updated_at }}</span></td>
 
                                     <td class="text-center">
-                                        @if(Auth::user()->role == "cabor"||Auth::user()->role == "staff")
-                                            @if(!$check_pengajuan || ($check_pengajuan->status ?? null) == 2)
-                                            {{-- @if($dt->status != 1) --}}
-                                             {{-- <a class="btn btn-fill btn-info" href="" title='View Detail'><i class="fa fa-eye"></i></a> --}}
-                                             <form onsubmit="return confirm('Anda Yakin untuk Menghapus Data Ini ?')" class="d-inline" action="{{ route('perencanaan.destroy',[$dt->id_perencanaan]) }}" method="post">
+                                        @if(Auth::user()->role == "cabor")
+                                            @if($dt->status != 1)
+                                             <a class="btn btn-fill btn-info" href="" title='View Detail'><i class="fa fa-eye"></i></a>
+                                             <form onsubmit="return confirm('Anda Yakin untuk Menghapus Data Ini ?')" class="d-inline" action="" method="post">
                                             @csrf
                                             <input type="hidden" name="_method" value="DELETE">
                                             <button type="submit" class="btn btn-fill btn-danger"><i class="fa fa-trash" style="font-size: 19px;"></i></button>
                                             </form>
-                                            {{-- @endif --}}
                                             @endif
                                         @endif
                                     </td>
@@ -144,10 +127,9 @@
                         <label for="tahun_anggaran">Tahun Anggaran</label>
                         <select class="form-control" id="tahun_anggaran" name="tahun_anggaran" required>
                             <option value="">Pilih Tahun Anggaran</option>
-                            {{-- @foreach($years as $year)
+                            @foreach($years as $year)
                                 <option value="{{ $year }}">{{ $year }}</option>
-                            @endforeach --}}
-                            <option value="{{ $years }}">{{ $years }}</option>
+                            @endforeach
                         </select>
                     </div>
 
@@ -182,28 +164,28 @@
                         </div>
 
                         <div class="form-group mb-3">
-                            <label>Jenis Barang</label>
-                            <div class="input-group">
-                                <select class="form-control" id="kode_ketbarang" name="kode_ketbarang" required>
-                                    <option value="">Pilih Kode Barang</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="form-group mb-3">
-                            <label>Rekening</label>
+                            <label>Rekening Belanja</label>
                             <div class="input-group">
                                 <select class="form-control" id="kode_rekening" name="kode_rekening" required disabled>
-                                    <option value="">Pilih Rekening</option>
+                                    <option value="">Pilih Rekening Belanja</option>
                                 </select>
                             </div>
                         </div>
 
                         <div class="form-group mb-3">
-                            <label>Nama Barang</label>
+                            <label>Belanja</label>
                             <div class="input-group">
-                                <select class="form-control" id="id_nama_barang" name="id_nama_barang" required disabled>
-                                    <option value="">Pilih Nama Barang</option>
+                                <select class="form-control" id="kode_belanja" name="kode_belanja" required disabled>
+                                    <option value="">Pilih Belanja</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label>Barang/Jasa</label>
+                            <div class="input-group">
+                                <select class="form-control" id="kode_barang" name="kode_barang" required disabled>
+                                    <option value="">Pilih Barang/Jasa</option>
                                 </select>
                             </div>
                         </div>
@@ -235,72 +217,7 @@
     </div>
 </div>
 
-<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script>
-const checkPengajuan = @json($check_pengajuan);
-if (checkPengajuan?.id) {
-    const buttonElement = document.getElementById("detail-button");
-    if (buttonElement) {
-        buttonElement.addEventListener("click", function () {
-            const url = "/back/verifikasi-perencanaan/detaildata/" + checkPengajuan.id;
-            window.open(url, "_blank"); // Opens the URL in a new tab
-        });
-    }
-}
-
-$('#ajukanPerencanaanBtn').click(function() {
-    // Get values from data attributes
-    const tahun = $(this).data('tahun');
-    const namacabor = $(this).data('cabor');
-
-    // Prepare the data to be sent
-    const data = {
-        tahun: tahun,
-        cabor: namacabor,
-        status: 0
-    };
-
-    Swal.fire({
-        title: 'Apakah anda yakin?',
-        text: 'Apakah anda yakin untuk mengajukan perencanaan?',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Ya, Ajukan!',
-        cancelButtonText: 'Batal'
-    }).then((result)=>{
-        if(result.isConfirmed){
-                $.ajax({
-                url: '/back/perencanaan/ajukan',
-                type: 'POST',
-                data: JSON.stringify(data),
-                contentType: 'application/json',
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                success: function(response) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Berhasil',
-                        text: 'Perencanaan berhasil diajukan!'
-                    }).then(() => {
-                        location.reload();
-                    });
-                },
-                error: function(xhr) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Gagal',
-                        text: xhr.responseJSON?.message || 'Terjadi kesalahan saat mengajukan perencanaan'
-                    });
-                }
-            });
-        }
-    })
-
-
-});
 document.addEventListener('DOMContentLoaded', function() {
     let budgetLimit = 0;
     let sisaAnggaranSemester1 = 0; // Declare in higher scope
@@ -337,8 +254,8 @@ document.addEventListener('DOMContentLoaded', function() {
             if (response.ok ) {
                 budgetLimit = data['data']['nominal'];
                 sisaAnggaran = data['data']['nominal_sisa'];
-                sisaAnggaranSemester1 = data['data']['sisa_semester1'];
-                sisaAnggaranSemester2 = data['data']['sisa_semester2'];
+                sisaAnggaranSemester1 = data['data']['semester1'];
+                sisaAnggaranSemester2 = data['data']['semester2'];
                 document.getElementById('total_limit').textContent =
                     `Rp ${new Intl.NumberFormat('id-ID').format(budgetLimit)}`;
                 document.getElementById('sisa_anggaran').textContent =
@@ -350,18 +267,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.getElementById('budget_info').style.display = 'block';
                 document.getElementById('main_form_section').style.display = 'block';
                 loadKegiatanData();
-                loadKetBarangData();
             } else {
                 throw new Error('Failed to fetch budget limit');
             }
         } catch (error) {
-            //alert('Error: Could not fetch budget limit');
-            error.preventDefault && error.preventDefault();
-            Swal.fire({
-                icon: 'error',
-                title: 'Gagal',
-                text: 'Belum Ada Data Nominal untuk Tahun yang Dipilih.'
-            });
+            alert('Error: Could not fetch budget limit');
             resetForm();
         }
     });
@@ -382,25 +292,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         } catch (error) {
             alert('Error: Could not load kegiatan data');
-        }
-    }
-
-    async function loadKetBarangData() {
-        try {
-            const response = await fetch('{{ route("get.ketbarang") }}');
-            const data = await response.json();
-
-            if (response.ok) {
-                const options = data.map(item =>
-                    `<option value="${item.kode_ketbarang}">${item.kode_ketbarang} - ${item.ket_barang}</option>`
-                );
-                document.getElementById('kode_ketbarang').innerHTML =
-                    '<option value="">Pilih Kode Barang</option>' + options.join('');
-            } else {
-                throw new Error('Failed to fetch kode barang data');
-            }
-        } catch (error) {
-            alert('Error: Could not load kode barang data');
         }
     }
 
@@ -438,51 +329,48 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-        // When ket barang is selected
-    $('#kode_ketbarang').change(function() {
-        const kodeKetBarang = $(this).val();
-        //console.log(kodeKetBarang);
-        if(kodeKetBarang) {
-            $('#kode_rekening').prop('disabled', false);
-            $.ajax({
-                url: `{{ url('back/get-rekening1') }}/${kodeKetBarang}`,
-                type: 'GET',
-                success: function(data) {
-                    let options = '<option value="">Pilih Rekening</option>';
-                    data.forEach(function(item) {
-                        options += `<option value="${item.kode_rekening}">${item.kode_rekening} - ${item.ket_rekening}</option>`;
-                    });
-                    $('#kode_rekening').html(options);
-                }
-            });
-        } else {
-            $('#kode_rekening').prop('disabled', true).html('<option value="">Pilih Rekening</option>');
-            $('#kode_namabarang').prop('disabled', true).html('<option value="">Pilih Nama Barang</option>');
-        }
-    });
-
     // When rekening is selected
     $('#kode_rekening').change(function() {
         const kodeRekening = $(this).val();
         if(kodeRekening) {
-            $('#id_nama_barang').prop('disabled', false);
+            $('#kode_belanja').prop('disabled', false);
             $.ajax({
-                url: `{{ url('back/get-barang1') }}/${kodeRekening}`,
+                url: `{{ url('back/get-belanja') }}/${kodeRekening}`,
                 type: 'GET',
                 success: function(data) {
-                    let options = '<option value="">Pilih Nama Barang</option>';
+                    let options = '<option value="">Pilih Belanja</option>';
                     data.forEach(function(item) {
-                        options += `<option value="${item.id}">${item.kode_rekening} - ${item.nama_barang}</option>`;
+                        options += `<option value="${item.kode_belanja}">${item.kode_belanja} - ${item.uraian_belanja}</option>`;
                     });
-                    $('#id_nama_barang').html(options);
+                    $('#kode_belanja').html(options);
                 }
             });
         } else {
-            $('#id_nama_barang').prop('disabled', true).html('<option value="">Pilih Nama Barang</option>');
+            $('#kode_belanja').prop('disabled', true).html('<option value="">Pilih Belanja</option>');
+            $('#kode_barang').prop('disabled', true).html('<option value="">Pilih Barang/Jasa</option>');
         }
     });
 
-
+    // When belanja is selected
+    $('#kode_belanja').change(function() {
+        const kodeBelanja = $(this).val();
+        if(kodeBelanja) {
+            $('#kode_barang').prop('disabled', false);
+            $.ajax({
+                url: `{{ url('back/get-barang') }}/${kodeBelanja}`,
+                type: 'GET',
+                success: function(data) {
+                    let options = '<option value="">Pilih Barang/Jasa</option>';
+                    data.forEach(function(item) {
+                        options += `<option value="${item.kode_barang}">${item.kode_barang} - ${item.nama_barang}</option>`;
+                    });
+                    $('#kode_barang').html(options);
+                }
+            });
+        } else {
+            $('#kode_barang').prop('disabled', true).html('<option value="">Pilih Barang/Jasaz</option>');
+        }
+    });
 
     function numberFormat(number, decimals = 0, decPoint = ',', thousandsSep = '.') {
         const fixedNumber = number.toFixed(decimals); // Ensure the number has the correct decimal places
@@ -493,25 +381,25 @@ document.addEventListener('DOMContentLoaded', function() {
         return parts.join(decPoint); // Join integer and decimal parts with the specified decimal point
     }
 
-    // When nama barang is selected
-    $('#id_nama_barang').change(function() {
-        const idBarang = $(this).val();
-        if(idBarang) {
+    // When barang is selected
+    $('#kode_barang').change(function() {
+        const kodeBarang = $(this).val();
+        if(kodeBarang) {
             $.ajax({
-                url: `{{ url('back/get-harga1') }}/${idBarang}`,
+                url: `{{ url('back/get-harga') }}/${kodeBarang}`,
                 type: 'GET',
                 success: function(data) {
                     const hargaSatuanField = $('#harga_satuan');
                     if (data.harga_satuan && data.harga_satuan > 0) {
                         // If there's a valid price from server, set it and make readonly
                         hargaSatuanField.val(numberFormat(data.harga_satuan));
-                        hargaSatuanField.prop('readonly', true);
-                        //console.log(data.harga_satuan);
+                        hargaSatuanField.prop('readonly', false);
+                        console.log(data.harga_satuan);
                     } else {
                         // If no valid price, clear field and make editable
                         hargaSatuanField.val('');
                         hargaSatuanField.prop('readonly', false);
-                        //console.log(kodeBarang);
+                        console.log(kodeBarang);
                     }
                 },
                 error: function() {

@@ -38,16 +38,11 @@
                                 <tr>
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">No</th>
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Nama Cabor</th>
-                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Kegiatan</th>
-                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Rekening</th>
-                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Belanja</th>
-                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Barang</th>
-                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Harga Satuan</th>
-                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Bulan</th>
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Tahun</th>
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Status</th>
-                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Created at</th>
-                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Updated at</th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Catatan</th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Verified by</th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Verified at</th>
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Action</th>
                                 </tr>
                             </thead>
@@ -59,25 +54,20 @@
                                             {{ ($data->currentPage() - 1) * $data->perPage() + $index + 1 }}
                                         </span>
                                     </td>
-                                    <td><span class="text-secondary text-xs">{{ $dt->nama_cabor }}</span></td>
-                                    <td><span class="text-secondary text-xs">{{ $dt->kode_kegiatan }} - {{ $dt->uraian_kegiatan }}</span></td>
-                                    <td><span class="text-secondary text-xs">{{ $dt->kode_rekening }} - {{ $dt->uraian_rekening }}</span></td>
-                                    <td><span class="text-secondary text-xs">{{ $dt->kode_belanja }} - {{ $dt->uraian_belanja }}</span></td>
-                                    <td><span class="text-secondary text-xs">{{ $dt->kode_barang }} - {{ $dt->nama_barang }}</span></td>
-                                    <td><span class="text-secondary text-xs">Rp {{ number_format($dt->harga_satuan, 0, ',', '.') }}</span></td>
-                                    <td><span class="text-secondary text-xs">{{ $dt->bulan }}</span></td>
-                                    <td><span class="text-secondary text-xs">{{ $dt->tahun_anggaran }}</span></td>
+                                    <td><span class="text-secondary text-xs">{{ $dt->cabor }}</span></td>
+                                    <td><span class="text-secondary text-xs">{{ $dt->tahun }}</span></td>
                                     <td>
                                          <span class="badge
                                             {{ $dt->status == 1 ? 'bg-success' : ($dt->status == 2 ? 'bg-danger' : 'bg-warning') }}">
-                                            {{ $dt->status == 1 ? 'Disetujui' : ($dt->status == 2 ? 'Ditolak' : 'Belum Diverifikasi') }}
+                                            {{ $dt->status == 1 ? 'Disetujui' : ($dt->status == 2 ? 'Revisi' : 'Belum Diverifikasi') }}
                                         </span>
                                     </td>
-                                    <td class="text-center"><span class="text-secondary text-xs">{{ $dt->created_at }}</span></td>
-                                    <td class="text-center"><span class="text-secondary text-xs">{{ $dt->updated_at }}</span></td>
+                                    <td><span class="text-secondary text-xs">{{ $dt->catatan }}</span></td>
+                                    <td class="text-center"><span class="text-secondary text-xs">{{ $dt->verified_by }}</span></td>
+                                    <td class="text-center"><span class="text-secondary text-xs">{{ $dt->verified_at }}</span></td>
                                     <td class="text-center">
                                         @if(Auth::user()->role == "admin")
-                                             <a class="btn btn-fill btn-info view-detail" href="javascript:void(0)" data-id="{{ $dt->id_perencanaan }}" title='View Detail'><i class="fa fa-eye"></i></a>
+                                             <a class="btn btn-fill btn-info view-detail" href="javascript:void(0)" data-id="{{ $dt->pengajuan_perencanaan_id }}" title='View Detail'><i class="fa fa-eye"></i></a>
                                         @endif
                                     </td>
                                 </tr>
@@ -108,96 +98,45 @@
 
                     <div class="form-group mb-3">
                         <label for="tahun_anggaran">Tahun Anggaran</label>
-                        <input type="text" class="form-control" placeholder="tahun anggaran" name="tahun_anggaran" id="tahun_anggaran" readonly="readonly">
+                        <input type="text" class="form-control" placeholder="tahun anggaran" name="tahun_anggaran" id="tahun_anggaran"  readonly="readonly">
                     </div>
 
-                    <div id="main_form_section">
+
+                    <div class="form-group mb-3">
+                        <label>Nama Cabor</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" name="cabor" id="cabor" readonly="readonly">
+                        </div>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <div class="input-group">
+                            <button id="detail-button" class="btn btn-primary">RINCIAN KERTAS KERJA</button>
+                        </div>
+                    </div>
+
+
+                    <div class="row mb-3">
+
                         <div class="col-md-6">
-                                <input type="hidden" class="form-control" placeholder="Bulan" name="bulanz" id="bulanz" readonly>
-                        </div>
-                        <div class="form-group mb-3">
-                            <label>Dianggarkan untuk Bulan</label>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <select class="form-control" name="bulan" id="bulan" required>
-                                        <option value="" id="defaultMonth">Pilih Bulan</option>
-                                        <hr>
-                                        @foreach($months as $key => $month)
-                                            <option value="{{ $key }}">{{ $month }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group mb-3">
-                            <label>Kegiatan</label>
-                            <div class="input-group">
-                                <input type="text" class="form-control" name="kode_kegiatan" id="kode_kegiatan" readonly="readonly">
-                            </div>
+                            <label>Catatan</label>
+                            <input type="text" class="form-control" placeholder="Catatan" name="catatan" id="catatan">
                         </div>
 
-                        <div class="form-group mb-3">
-                            <label>Rekening Belanja</label>
-                            <div class="input-group">
-                                <input type="text" class="form-control" name="kode_rekening" id="kode_rekening" readonly="readonly">
-                            </div>
-                        </div>
+                    </div>
 
-                        <div class="form-group mb-3">
-                            <label>Belanja</label>
-                            <div class="input-group">
-                                <input type="text" class="form-control" name="kode_belanja" id="kode_belanja" readonly="readonly">
-                            </div>
-                        </div>
 
-                        <div class="form-group mb-3">
-                            <label>Barang/Jasa</label>
-                            <div class="input-group">
-                                <input type="text" class="form-control" name="kode_barang" id="kode_barang" readonly="readonly">
-                            </div>
-                        </div>
+                    <div class="text-right">
+                            <form id="form_setuju" action="" method="POST" style="display: inline;">
+                            @csrf
 
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label>Harga Satuan</label>
-                                <input type="text" class="form-control" id="harga_satuan" name="harga_satuan" readonly>
-                            </div>
-                            <div class="col-md-6">
-                                <label>Jumlah dan Satuan</label>
-                                <div class="input-group">
-                                    <input type="number" class="form-control" placeholder="Jumlah" name="jumlah" id="jumlah" min="0">
-                                    <input type="text" class="form-control" placeholder="Satuan" name="satuan" id="satuan">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row mb-3">
-
-                            <div class="col-md-6">
-                                <label>Keterangan</label>
-                                <input type="text" class="form-control" placeholder="Keterangan" name="keterangan" id="keterangan">
-                            </div>
-
-                        </div>
-                        <div class="alert alert-info" id="budget_info">
-                        <strong>Total : <span id="harga_total"> x </span></strong>
-                        </div>
-
-                        <div class="text-right">
-                             <form id="form_setuju" action="{{ route('perencanaan.setuju', ':id') }}" method="POST" style="display: inline;">
-                                @csrf
-                                <input type="hidden" class="form-control" name="keterangansetuju" id="keterangansetuju">
-                                <input type="hidden" class="form-control" name="harga_total2" id="harga_total2">
-                                <input type="hidden" class="form-control" name="jumlah2" id="jumlah2">
-                                <input type="hidden" class="form-control" name="satuan2" id="satuan2">
-                                <input type="hidden" class="form-control" name="bulan_angka" id="bulan_angka">
-                                <button type="submit" class="btn btn-success">Setuju</button>
-                            </form>
-                            <form id="form_tolak" action="{{ route('perencanaan.tolak', ':id') }}" method="POST" style="display: inline;">
-                                @csrf
-                                <input type="hidden" class="form-control" placeholder="Keterangan" name="keterangantolak" id="keterangantolak">
-                                <button type="submit" class="btn btn-danger">Tolak</button>
-                            </form>
+                            <button type="submit" class="btn btn-success">Setuju</button>
+                        </form>
+                        <form id="form_tolak" action="" method="POST" style="display: inline;">
+                            @csrf
+                            <input type="hidden" class="form-control" placeholder="Keterangan" name="keterangantolak" id="keterangantolak">
+                            <button type="submit" class="btn btn-danger">Revisi</button>
+                        </form>
 
                         </div>
                     </div>
@@ -212,116 +151,47 @@
 $(document).ready(function() {
     $('.view-detail').click(function() {
         var id = $(this).data('id');
-        const formatRupiah = (value) => {
-            return 'Rp ' + new Intl.NumberFormat('id-ID', {
-                minimumFractionDigits: 0
-            }).format(value);
-        };
+        const buttonElement = document.getElementById("detail-button");
+        buttonElement.addEventListener("click", function () {
+            const url = "/back/verifikasi-perencanaan/detaildata/" + id;
+            window.open(url, "_blank"); // Opens the URL in a new tab
+        });
 
-        // Fetch detail data
+        // Clear previous values
+        $('#tahun_anggaran').val('');
+        $('#cabor').val('');
+        $('#keterangan').val('');
+
+        // Get data via AJAX
         $.ajax({
-            url: '/back/perencanaan/detail/' + id,  // Add this route
+            url: '/back/get-perencanaan-detail/' + id,
             type: 'GET',
             success: function(response) {
-                const monthNames = [
-                    "Januari", "Februari", "Maret", "April", "Mei", "Juni",
-                    "Juli", "Agustus", "September", "Oktober", "November", "Desember"
-                ];
-                const monthMap = {
-                    Januari: "01",
-                    Februari: "02",
-                    Maret: "03",
-                    April: "04",
-                    Mei: "05",
-                    Juni: "06",
-                    Juli: "07",
-                    Agustus: "08",
-                    September: "09",
-                    Oktober: "10",
-                    November: "11",
-                    Desember: "12"
-                };
-
-                const monthNumber = response.bulan; // e.g., 1 for Januari
-                const monthName = monthNames[monthNumber - 1]; // Array index starts at 0
-                //const totalPrice = response.harga_satuan * response.jumlah;
-                const defaultTotal = response.harga_satuan * response.jumlah;
-
-                // Fill modal with data
-                $('#tahun_anggaran').val(response.tahun_anggaran);
-                $('#kode_kegiatan').val(response.kode_kegiatan + ' - ' + response.uraian_kegiatan);
-                $('#kode_rekening').val(response.kode_rekening + ' - ' + response.uraian_rekening);
-                $('#kode_belanja').val(response.kode_belanja + ' - ' + response.uraian_belanja);
-                $('#kode_barang').val(response.kode_barang + ' - ' + response.nama_barang);
-                $('#harga_satuan').val(formatRupiah(response.harga_satuan));
-                $('#jumlah').val(response.jumlah);
-                $('#satuan').val(response.satuan);
-                $('#defaultMonth').text(monthName).val(monthNumber);
-                $('#bulanz').val(monthName);
-
-                //$('#bulan_angka').val(monthNumber);
-                // Initial calculation of total price
-                const initialJumlah = Number($('#jumlah').val()) || 0;
-                const initialTotal = response.harga_satuan * initialJumlah;
-
-                $('#harga_total').text(formatRupiah(defaultTotal));
-                $('#harga_total2').val(defaultTotal);
-                $('#jumlah2').val(response.jumlah);
-                $('#jumlah').on('input', function() {
-                    const currentJumlah = Number($(this).val()) || 0;
-                    const newTotal = response.harga_satuan * currentJumlah;
-                    $('#harga_total').text(formatRupiah(newTotal));
-                    $('#harga_total2').val(newTotal);
-                    $('#jumlah2').val(currentJumlah);
-                });
-                $('#satuan2').val(response.satuan);
-                $('#satuan').on('input', function() {
-                    const currentSatuan = $(this).val();
-                    $('#satuan2').val(currentSatuan);
-                });
-                const monthNm = document.getElementById('bulanz').value;
-                const monthNumbr = monthMap[monthNm] || "Invalid month";
-                $('#bulan_angka').val(monthNumber);
-                $('#bulan').on('change', function() {
-                    const selectedMonthNumber = $(this).val();
-                    const selectedMonthName = monthNames[selectedMonthNumber - 1];
-                    $('#defaultMonth').text(selectedMonthName).val(selectedMonthNumber);
-                    $('#bulan_angka').val(selectedMonthNumber);
-
-                });
-
-
-
-                $('#keterangan').val(response.keterangan);
-
-                if(response.status == 1){
-                    $('#form_setuju').hide();
-                    $('#form_tolak').hide();
-                }else{
-                    $('#form_setuju').show();
-                    $('#form_tolak').show();
-                    $('#form_setuju').attr('action', '/back/perencanaan/setuju/' + id);
-                    $('#form_tolak').attr('action', '/back/perencanaan/tolak/' + id);
-                }
-
-
-                // Show the modal
+                $('#tahun_anggaran').val(response.tahun);
+                $('#cabor').val(response.cabor);
+                $('#form_setuju').attr('action', '/back/verifikasi-perencanaan/setuju/' + id);
+                $('#form_tolak').attr('action', '/back/verifikasi-perencanaan/tolak/' + id);
                 $('#DetailModal').modal('show');
             },
             error: function(xhr) {
-                console.log('Error:', xhr);
+                //console.log(xhr.responseText);
             }
         });
     });
-});
-    const keterangan = document.getElementById('keterangan');
-    const keterangansetuju = document.getElementById('keterangansetuju');
-    const keterangantolak = document.getElementById('keterangantolak');
-    // Add an event listener to update keterangan2 whenever keterangan changes
-    keterangan.addEventListener('input', function () {
-        keterangansetuju.value = keterangan.value;
-        keterangantolak.value = keterangan.value;
-    });
-</script>
 
+    // Handle keterangan value before form submission
+    $('#form_setuju').submit(function(){
+        var catatan = $('#catatan').val();
+        if (!$('#form_setuju input[name="catatan"]').length) {
+            $(this).append('<input type="hidden" name="catatan" value="' + catatan + '">');
+        }
+    });
+    $('#form_tolak').submit(function() {
+        var catatan = $('#catatan').val();
+        if (!$('#form_setuju input[name="catatan"]').length) {
+            $(this).append('<input type="hidden" name="catatan" value="' + catatan + '">');
+        }
+    });
+});
+</script>
 @endsection

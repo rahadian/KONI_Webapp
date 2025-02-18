@@ -45,7 +45,7 @@ class AtlitController extends Controller
             $nama_cabor = "";
         }
 
-        if($user->role == "admin"||$user->role == "cabor"){
+        if($user->role == "admin"||$user->role == "staff"||$user->role == "cabor"){
             return view('back.atlit.index',[
                 'page'=>$page,
                 'data'=>$data,
@@ -91,6 +91,7 @@ class AtlitController extends Controller
     {
         $validatedData = $request->validate([
             'id_cabor' => 'required',
+            'jenis' => 'required',
             'nik' => 'required',
             'nama_lengkap' => 'required',
             'jenis_kelamin' => 'required',
@@ -103,6 +104,7 @@ class AtlitController extends Controller
             'kk' => 'required|mimes:jpg,jpeg,png,webp|max:2048',
         ], [
             'id_cabor.required' => 'ID Cabor harus diisi',
+            'jenis.required' => 'Jenis Atlet harus diisi',
             'nik.required' => 'NIK harus diisi',
             'nama_lengkap.required' => 'Nama Lengkap harus diisi',
             'jenis_kelamin.required' => 'Jenis Kelamin harus diisi',
@@ -123,18 +125,34 @@ class AtlitController extends Controller
             'kk.max' => 'Ukuran File KTP maksimal 2Mb',
         ]);
 
+        if ($request->jenis !== 'Binaan') {
+            $request->validate([
+                'ukuran_baju' => 'required',
+                'ukuran_sepatu' => 'required',
+            ], [
+                'ukuran_baju.required' => 'Ukuran Baju harus diisi',
+                'ukuran_sepatu.required' => 'Ukuran Sepatu harus diisi',
+            ]);
+        }
+
         $id = Auth::id();
         $user = \App\Models\User::where('id', $id)->first();
         $nama_cabor = $user->cabor;
 
         $new_data = new Atlit();
         $new_data->id_cabor = $validatedData['id_cabor'];
+        $new_data->jenis = $validatedData['jenis'];
         $new_data->nik = $validatedData['nik'];
         $new_data->nama_lengkap = $validatedData['nama_lengkap'];
         $new_data->jenis_kelamin = $validatedData['jenis_kelamin'];
         $new_data->kota_lahir = $validatedData['kota_lahir'];
         $new_data->tanggal_lahir = $validatedData['tanggal_lahir'];
         $new_data->npwp = $validatedData['npwp'];
+
+        if ($request->jenis !== 'Binaan') {
+            $new_data->ukuran_baju = $request->ukuran_baju;
+            $new_data->ukuran_sepatu = $request->ukuran_sepatu;
+        }
 
         if ($request->hasFile('foto')) {
             $extension = $request->file('foto')->guessExtension();
@@ -223,6 +241,7 @@ class AtlitController extends Controller
     {
         $validatedData = $request->validate([
             'id_cabor' => 'required',
+            'jenis' => 'required',
             'nik' => 'required',
             'nama_lengkap' => 'required',
             'jenis_kelamin' => 'required',
@@ -235,6 +254,7 @@ class AtlitController extends Controller
             'kk' => 'nullable|mimes:jpg,jpeg,png,webp|max:2048',
         ], [
             'id_cabor.required' => 'ID Cabor harus diisi',
+            'jenis.required' => 'Jenis Atlet harus diisi',
             'nik.required' => 'NIK harus diisi',
             'nama_lengkap.required' => 'Nama Lengkap harus diisi',
             'jenis_kelamin.required' => 'Jenis Kelamin harus diisi',
@@ -252,18 +272,37 @@ class AtlitController extends Controller
 
         ]);
 
+        if ($request->jenis !== 'Binaan') {
+            $request->validate([
+                'ukuran_baju' => 'required',
+                'ukuran_sepatu' => 'required',
+            ], [
+                'ukuran_baju.required' => 'Ukuran Baju harus diisi',
+                'ukuran_sepatu.required' => 'Ukuran Sepatu harus diisi',
+            ]);
+        }
+
         $idz = Auth::id();
         $user = \App\Models\User::where('id', $idz)->first();
         $nama_cabor = $user->cabor;
 
         $upd_data = Atlit::findorFail($id);;
         $upd_data->id_cabor = $validatedData['id_cabor'];
+        $upd_data->jenis = $validatedData['jenis'];
         $upd_data->nik = $validatedData['nik'];
         $upd_data->nama_lengkap = $validatedData['nama_lengkap'];
         $upd_data->jenis_kelamin = $validatedData['jenis_kelamin'];
         $upd_data->kota_lahir = $validatedData['kota_lahir'];
         $upd_data->tanggal_lahir = $validatedData['tanggal_lahir'];
         $upd_data->npwp = $validatedData['npwp'];
+
+        if ($request->jenis !== 'Binaan') {
+            $upd_data->ukuran_baju = $request->ukuran_baju;
+            $upd_data->ukuran_sepatu = $request->ukuran_sepatu;
+        }else{
+            $upd_data->ukuran_baju = "-";
+            $upd_data->ukuran_sepatu = "-";
+        }
 
 
         if ($request->hasFile('foto')) {
@@ -311,7 +350,13 @@ class AtlitController extends Controller
     public function destroy($id)
     {
         $data = Atlit::findOrFail($id);
-        $data->delete();
-        return redirect()->route('atlit_cabor.index')->with('status','Data Berhasil dihapus');
+        $idz = Auth::id();
+        $user = \App\Models\User::where('id', $idz)->first();
+        if($user->role == "cabor"){
+            $data->delete();
+            return redirect()->route('atlit_cabor.index')->with('status','Data Berhasil dihapus');
+        }else{
+            return redirect()->route('cmshome.index')->with(['error' => 'Unauthorized Access. User Tidak Diijinkan.']);
+        }
     }
 }

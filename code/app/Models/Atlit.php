@@ -10,6 +10,6 @@ class Atlit extends Model
     use HasFactory;
     protected $table = 'atlit';
     protected $fillable = [
-       'id_cabor','nik', 'nama_lengkap','jenis_kelamin','kota_lahir','tanggal_lahir','npwp','foto','sertifikat','ktp','kk','created_at','updated_at'
+       'id_cabor','jenis','nik', 'nama_lengkap','jenis_kelamin','ukuran_baju','ukuran_sepatu','kota_lahir','tanggal_lahir','npwp','foto','sertifikat','ktp','kk','created_at','updated_at'
     ];
 }

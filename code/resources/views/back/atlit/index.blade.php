@@ -37,10 +37,13 @@
                   <thead>
                     <tr>
                       <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">No</th>
-                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Cabor</th>
+                      {{-- <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Cabor</th> --}}
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Jenis</th>
                       <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">NIK</th>
                       <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Nama Lengkap</th>
                       <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Jenis Kelamin</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Ukuran Baju</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Ukuran Sepatu</th>
                       <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Kota Lahir</th>
                       <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Tanggal Lahir</th>
                       <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">NPWP</th>
@@ -66,10 +69,17 @@
                       <td class="align-middle" style="padding-left:25px">
                         <p>{{ $i }}</p>
                       </td>
-                      <td>
+                      {{-- <td>
                         <div class="d-flex px-2 py-1">
                           <div class="d-flex flex-column justify-content-center">
                             <h6 class="mb-0 text-sm">{{ $dt->nama_cabor }}</h6>
+                          </div>
+                        </div>
+                      </td> --}}
+                      <td>
+                        <div class="d-flex px-2 py-1">
+                          <div class="d-flex flex-column justify-content-center">
+                            <h6 class="mb-0 text-sm">{{ $dt->jenis }}</h6>
                           </div>
                         </div>
                       </td>
@@ -91,6 +101,20 @@
                         <div class="d-flex px-2 py-1">
                           <div class="d-flex flex-column justify-content-center">
                             <h6 class="mb-0 text-sm">{{ $dt->jenis_kelamin }}</h6>
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="d-flex px-2 py-1">
+                          <div class="d-flex flex-column justify-content-center">
+                            <h6 class="mb-0 text-sm">{{ $dt->ukuran_baju }}</h6>
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="d-flex px-2 py-1">
+                          <div class="d-flex flex-column justify-content-center">
+                            <h6 class="mb-0 text-sm">{{ $dt->ukuran_sepatu }}</h6>
                           </div>
                         </div>
                       </td>

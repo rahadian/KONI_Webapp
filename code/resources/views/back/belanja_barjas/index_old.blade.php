@@ -43,7 +43,7 @@
                             <a href="{{ route('belanja2.show',[$currentYear->tahun,$key]) }}" class="btn btn-info">
                                 Lihat Detail
                             </a>
-                            @if(Auth::user()->role == "cabor"||Auth::user()->role == "staff")
+                            @if(Auth::user()->role == "cabor")
                             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addBudgetModal{{$key}}">
                                 <i class="fa fa-plus"></i> Tambah Belanja
                             </button>
@@ -74,7 +74,7 @@
                                                 <option value="">Pilih Data Barang</option>
                                                 @foreach($perencanaan[$key] as $item)
                                                     <option value="{{ $item->id }}" data-harga="{{ $item->harga_satuan }}" data-jumlah="{{ $item->jumlah }}">
-                                                        {{ $item->kode_rekening }} - {{ $item->nama_barang }} Rp {{ number_format($item->harga_satuan, 0, ',', '.') }} - {{ $item->jumlah }}
+                                                        {{ $item->kode_barang }} - {{ $item->nama_barang }} Rp {{ number_format($item->harga_satuan, 0, ',', '.') }} - {{ $item->jumlah }}
                                                     </option>
                                                 @endforeach
                                             </select>

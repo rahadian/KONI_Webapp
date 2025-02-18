@@ -39,6 +39,7 @@
                       <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">No</th>
                       <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Cabor</th>
                       <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Nama Kejuaraan</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Nama Atlet</th>
                       <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Tingkatan Kerjuaraan</th>
                       <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Waktu Kegiatan</th>
                       <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Perolehan Medali</th>
@@ -67,6 +68,13 @@
                         <div class="d-flex px-2 py-1">
                           <div class="d-flex flex-column justify-content-center">
                             <h6 class="mb-0 text-sm">{{ $dt->nama_cabor }}</h6>
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="d-flex px-2 py-1">
+                          <div class="d-flex flex-column justify-content-center">
+                            <h6 class="mb-0 text-sm">{{ $dt->nama_atlet }}</h6>
                           </div>
                         </div>
                       </td>

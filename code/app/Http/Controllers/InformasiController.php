@@ -41,7 +41,7 @@ class InformasiController extends Controller
                     ->where('kategori','Pengumuman')
                     ->count();
 
-        if($user->role == "admin"){
+        if($user->role == "admin"||$user->role == "media"){
             return view('back.informasi.index',[
                 'page'=>$page,
                 'data'=>$data,
@@ -67,7 +67,7 @@ class InformasiController extends Controller
                     ->first();
 
 
-        if($user->role == "admin"){
+        if($user->role == "admin"||$user->role == "media"){
             return view('back.informasi.create',[
                 'page'=>$page,
 
@@ -124,7 +124,7 @@ class InformasiController extends Controller
             $path = $request->file('image')->storeAs('informasi/' . $validatedData['kategori'], $nameberkas, 'public');
             $new_data->image = $path;
         }
-        if($user->role == "admin"){
+        if($user->role == "admin"||$user->role == "media"){
             $new_data->save();
             return redirect()->route('informasi.index')->with('status', 'Data Berhasil Disimpan.');
         }else{
@@ -155,7 +155,7 @@ class InformasiController extends Controller
         $data = Informasi::findorFail($id_artikel);
 
 
-        if($user->role == "admin"){
+        if($user->role == "admin"||$user->role == "media"){
             return view('back.informasi.edit',[
                 'page'=>$page,
                 'data'=>$data
@@ -214,7 +214,7 @@ class InformasiController extends Controller
             $upt_data->image = $path;
         }
 
-        if($user->role == "admin"){
+        if($user->role == "admin"||$user->role == "media"){
             $upt_data->save();
             return redirect()->route('informasi.index')->with('status', 'Data Berhasil Diupdate.');
         }else{
@@ -231,7 +231,11 @@ class InformasiController extends Controller
     public function destroy($id)
     {
         $data = Informasi::findOrFail($id);
-        $data->delete();
-        return redirect()->route('informasi.index')->with('status','Data Berhasil dihapus');
+        if($user->role == "admin"||$user->role == "media"){
+            $data->delete();
+            return redirect()->route('informasi.index')->with('status','Data Berhasil dihapus');
+        }else{
+            return redirect()->route('cmshome.index')->with(['error' => 'Unauthorized Access. User Tidak Diijinkan.']);
+        }
     }
 }

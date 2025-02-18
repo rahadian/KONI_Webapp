@@ -93,8 +93,13 @@ class AuthUserController extends Controller
         $new_data = new \App\Models\User;
         $new_data->name=$request->get('name');
         $new_data->username=$request->get('username');
-        $new_data->cabor=$request->get('cabor');
         $new_data->role=$request->get('role');
+        if($request->get('role')=="staff"){
+            $new_data->cabor="KESEKRETARIATAN";
+        }else{
+            $new_data->cabor=$request->get('cabor');
+        }
+
         $new_data->email=$request->get('email');
         $new_data->password = Hash::make($request->get('password'));
 

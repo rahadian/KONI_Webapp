@@ -45,15 +45,27 @@ Route::group(['prefix' => 'back','middleware' => 'auth'], function() {
     Route::resource('pengurus_cabor', App\Http\Controllers\PengurusCaborController::class);
     Route::resource('pelatih_cabor', App\Http\Controllers\PelatihController::class);
     Route::resource('atlit_cabor', App\Http\Controllers\AtlitController::class);
+    Route::resource('club_cabor', App\Http\Controllers\ClubCaborController::class);
     Route::resource('prestasi_cabor', App\Http\Controllers\PrestasiController::class);
     Route::get('get-kegiatan', [App\Http\Controllers\PerencanaanController::class,'getKegiatan'])->name('get.kegiatan');
+    Route::get('get-ketbarang', [App\Http\Controllers\PerencanaanController::class,'getKetBarang'])->name('get.ketbarang');
     Route::get('get-rekening/{kode_kegiatan}', [App\Http\Controllers\PerencanaanController::class,'getRekening']);
+    Route::get('get-rekening1/{kode_ketbarang}', [App\Http\Controllers\PerencanaanController::class,'getRekening1']);
     Route::get('get-belanja/{kode_rekening}', [App\Http\Controllers\PerencanaanController::class,'getBelanja']);
-    Route::get('get-barang/{kode_belanja}', [App\Http\Controllers\PerencanaanController::class,'getBarang']);
+    Route::get('get-barang/{kode_belanja}',
+    [App\Http\Controllers\PerencanaanController::class,'getBarang']);
+    Route::get('get-barang1/{kode_rekening}', [App\Http\Controllers\PerencanaanController::class,'getBarang1']);
     Route::get('get-harga/{kode_barang}', [App\Http\Controllers\PerencanaanController::class,'getHarga']);
+    Route::get('get-harga1/{id_barang}', [App\Http\Controllers\PerencanaanController::class,'getHarga1']);
     Route::get('get-budget-limit/{year}', [App\Http\Controllers\PerencanaanController::class,'getBudgetLimit']);
+    Route::get('get-perencanaan-detail/{id}', [App\Http\Controllers\PengajuanPerencanaanController::class, 'getDetail']);
     Route::get('/perencanaan/detail/{id}', [App\Http\Controllers\PerencanaanController::class,'getDetail'])->name('perencanaan.detail');
-    Route::get('verifikasi-perencanaan', [App\Http\Controllers\PerencanaanController::class,'verifikasi'])->name('perencanaan.verifikasi');
+    // Route::get('verifikasi-perencanaan', [App\Http\Controllers\PerencanaanController::class,'verifikasi'])->name('perencanaan.verifikasi');
+    Route::get('verifikasi-perencanaan', [App\Http\Controllers\PengajuanPerencanaanController::class,'index'])->name('verifikasi_perencanaan.index');
+    Route::get('verifikasi-perencanaan/detaildata/{id}', [App\Http\Controllers\PengajuanPerencanaanController::class,'DetailData'])->name('verifikasi_perencanaan.detaildata');
+    Route::post('/verifikasi-perencanaan/setuju/{id}', [App\Http\Controllers\PengajuanPerencanaanController::class, 'setuju'])->name('verifikasi_perencanaan.setuju');
+    Route::post('/verifikasi-perencanaan/tolak/{id}', [App\Http\Controllers\PengajuanPerencanaanController::class, 'tolak'])->name('verifikasi_perencanaan.tolak');
+    Route::post('/perencanaan/ajukan', [App\Http\Controllers\PerencanaanController::class, 'ajukan'])->name('perencanaan.ajukan');
     Route::post('/perencanaan/setuju/{id}', [App\Http\Controllers\PerencanaanController::class, 'setuju'])->name('perencanaan.setuju');
     Route::post('/perencanaan/tolak/{id}', [App\Http\Controllers\PerencanaanController::class, 'tolak'])->name('perencanaan.tolak');
     Route::resource('perencanaan', App\Http\Controllers\PerencanaanController::class);
@@ -64,8 +76,11 @@ Route::group(['prefix' => 'back','middleware' => 'auth'], function() {
     Route::post('/periode_tahun/aktifkan/{id}', [App\Http\Controllers\PeriodeTahunController::class, 'aktifkan'])->name('periode_tahun.aktifkan');
     Route::resource('periode_tahun', App\Http\Controllers\PeriodeTahunController::class);
     Route::resource('kegiatan', 'App\Http\Controllers\KegiatanController');
+    Route::resource('ket_barang', 'App\Http\Controllers\KetBarangController');
     Route::resource('rekening', 'App\Http\Controllers\RekeningController');
+    Route::resource('rekening1', 'App\Http\Controllers\Rekening1Controller');
     Route::resource('belanja', 'App\Http\Controllers\BelanjaController');
     Route::resource('barang', 'App\Http\Controllers\BarangController');
+    Route::resource('barang1', 'App\Http\Controllers\Barang1Controller');
 });
 

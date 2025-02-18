@@ -50,6 +50,7 @@
                         <option value="admin">Admin Pusat</option>
                         <option value="staff">Admin Staff</option>
                         <option value="cabor">Admin Cabor</option>
+                        <option value="media">Admin Media</option>
                     </select>
                 </div>
 

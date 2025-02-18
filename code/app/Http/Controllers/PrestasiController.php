@@ -45,7 +45,7 @@ class PrestasiController extends Controller
             $nama_cabor = "";
         }
 
-        if($user->role == "admin"||$user->role == "cabor"){
+        if($user->role == "admin"||$user->role == "staff"||$user->role == "cabor"){
             return view('back.prestasi.index',[
                 'page'=>$page,
                 'data'=>$data,
@@ -92,6 +92,7 @@ class PrestasiController extends Controller
         $validatedData = $request->validate([
             'id_cabor' => 'required',
             'nama_kejuaraan' => 'required',
+            'nama_atlet' => 'required',
             'tingkat_kejuaraan' => 'required',
             'waktu_kegiatan' => 'required',
             'perolehan_medali' => 'required',
@@ -101,6 +102,7 @@ class PrestasiController extends Controller
         ], [
             'id_cabor.required' => 'ID Cabor harus diisi',
             'nama_kejuaraan.required' => 'Nama Kejuaraan harus diisi',
+            'nama_atlet.required' => 'Nama Atlet harus diisi',
             'tingkat_kejuaraan.required' => 'Tingkat Kejuaraan harus diisi',
             'waktu_kegiatan.required' => 'Waktu Kegiatan harus diisi',
             'perolehan_medali.required' => 'Perolehan Medali harus diisi',
@@ -122,6 +124,7 @@ class PrestasiController extends Controller
         $new_data = new Prestasi();
         $new_data->id_cabor = $validatedData['id_cabor'];
         $new_data->nama_kejuaraan = $validatedData['nama_kejuaraan'];
+        $new_data->nama_atlet = $validatedData['nama_atlet'];
         $new_data->tingkat_kejuaraan = $validatedData['tingkat_kejuaraan'];
         $new_data->waktu_kegiatan = $validatedData['waktu_kegiatan'];
         $new_data->perolehan_medali = $validatedData['perolehan_medali'];
@@ -207,6 +210,7 @@ class PrestasiController extends Controller
         $validatedData = $request->validate([
             'id_cabor' => 'required',
             'nama_kejuaraan' => 'required',
+            'nama_atlet' => 'required',
             'tingkat_kejuaraan' => 'required',
             'waktu_kegiatan' => 'required',
             'perolehan_medali' => 'required',
@@ -216,6 +220,7 @@ class PrestasiController extends Controller
         ], [
             'id_cabor.required' => 'ID Cabor harus diisi',
             'nama_kejuaraan.required' => 'Nama Kejuaraan harus diisi',
+            'nama_atlet.required' => 'Nama Atlet harus diisi',
             'tingkat_kejuaraan.required' => 'Tingkat Kejuaraan harus diisi',
             'waktu_kegiatan.required' => 'Waktu Kegiatan harus diisi',
             'perolehan_medali.required' => 'Perolehan Medali harus diisi',
@@ -235,6 +240,7 @@ class PrestasiController extends Controller
         $upd_data = Prestasi::findorFail($id);;
         $upd_data->id_cabor = $validatedData['id_cabor'];
         $upd_data->nama_kejuaraan = $validatedData['nama_kejuaraan'];
+        $upd_data->nama_atlet = $validatedData['nama_atlet'];
         $upd_data->tingkat_kejuaraan = $validatedData['tingkat_kejuaraan'];
         $upd_data->waktu_kegiatan = $validatedData['waktu_kegiatan'];
         $upd_data->perolehan_medali = $validatedData['perolehan_medali'];
@@ -278,7 +284,13 @@ class PrestasiController extends Controller
     public function destroy($id)
     {
         $data = Prestasi::findOrFail($id);
-        $data->delete();
-        return redirect()->route('prestasi_cabor.index')->with('status','Data Berhasil dihapus');
+        $idz = Auth::id();
+        $user = \App\Models\User::where('id', $idz)->first();
+        if($user->role == "cabor"){
+            $data->delete();
+            return redirect()->route('prestasi_cabor.index')->with('status','Data Berhasil dihapus');
+        }else{
+            return redirect()->route('cmshome.index')->with(['error' => 'Unauthorized Access. User Tidak Diijinkan.']);
+        }
     }
 }

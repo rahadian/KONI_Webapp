@@ -37,6 +37,10 @@
                     <input type="text" class="form-control" id="nama_kejuaraan" name="nama_kejuaraan" required >
                 </div>
                 <div class="form-group">
+                    <label for="nama_atlet">Nama Atlet</label>
+                    <input type="text" class="form-control" id="nama_atlet" name="nama_atlet" required >
+                </div>
+                <div class="form-group">
                     <label for="tingkat_kejuaraan">Tingkatan Kejuaraan</label>
                     <input type="text" class="form-control" id="tingkat_kejuaraan" name="tingkat_kejuaraan" required >
                 </div>

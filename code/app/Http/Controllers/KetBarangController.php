@@ -1,16 +1,14 @@
 <?php
 
 namespace App\Http\Controllers;
-
 use Illuminate\Http\Request;
 use App\Models\Cabor;
 use App\Models\PengurusCabor;
 use App\Models\Perencanaan;
-use App\Models\BelanjaBarjas;
+use App\Models\KetBarang;
+use App\Models\Rekening1;
+use App\Models\Barang1;
 use App\Models\Kegiatan;
-use App\Models\Rekening;
-use App\Models\Belanja;
-use App\Models\Barang;
 use App\Models\LimitNominal;
 use App\Models\PeriodeTahun;
 use Validator;
@@ -21,7 +19,7 @@ use DB;
 use Str;
 
 date_default_timezone_set('Asia/Jakarta');
-class KegiatanController extends Controller
+class KetBarangController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -30,17 +28,20 @@ class KegiatanController extends Controller
      */
     public function index()
     {
-        $page = "Data Inventaris";
+        $page = "Data Inventaris Barang";
         $id = Auth::id();
         $user =\App\Models\User::where('id',$id)
                     ->first();
-        $kegiatans = Kegiatan::with(['rekenings.belanjas.barangs'])->get();
-        // dd($kegiatans);
+        $dtkegiatan = Kegiatan::orderBy('id','ASC')
+                    ->paginate(5);
+        $dtbarang = KetBarang::with(['rekening.barang'])->get();
+        // dd($dtbarang);
         // die();
         if($user->role == "admin"){
-            return view('back.kegiatan_barjas.index',[
+            return view('back.kegiatan_barjas.index2',[
                 'page'=>$page,
-                'kegiatans'=>$kegiatans,
+                'dtkegiatan'=>$dtkegiatan,
+                'dtbarang'=>$dtbarang,
             ]);
         }else{
             return redirect()->route('cmshome.index')->with(['error' => 'Unauthorized Access. User Tidak Diijinkan.']);
@@ -54,7 +55,7 @@ class KegiatanController extends Controller
      */
     public function create()
     {
-        //
+        return view('ket-barang.create');
     }
 
     /**
@@ -66,21 +67,21 @@ class KegiatanController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'kode_kegiatan' => 'required|unique:kegiatan',
-            'uraian_kegiatan' => 'required'
+            'kode_ketbarang' => 'required|unique:ket_barang',
+            'ket_barang' => 'required'
         ],[
-            'kode_kegiatan.required' => 'Kode Kegiatan wajib diisi.',
-            'kode_kegiatan.unique' => 'Kode Kegiatan sudah digunakan.',
-            'uraian_kegiatan.required' => 'Uraian Kegiatan Barang wajib diisi.'
+            'kode_ketbarang.required' => 'Kode Ket Barang wajib diisi.',
+            'kode_ketbarang.unique' => 'Kode Barang sudah digunakan.',
+            'ket_barang.required' => 'Keterangan Barang wajib diisi.'
         ]);
+        $ketBarang = new KetBarang();
+        $ketBarang->kode_ketbarang = $validated['kode_ketbarang'];
+        $ketBarang->ket_barang = $validated['ket_barang'];
+        $ketBarang->save();
 
-        // $kegiatan = Kegiatan::create($validated);
-        $kegiatan = new Kegiatan();
-        $kegiatan->kode_kegiatan = $validated['kode_kegiatan'];
-        $kegiatan->uraian_kegiatan = $validated['uraian_kegiatan'];
-        $kegiatan->save();
-        return response()->json(['success' => true, 'data' => $kegiatan]);
-        // return response()->json($kegiatan);
+        return response()->json(['success' => true, 'data' => $ketBarang]);
+        // return redirect()->route('ket_barang.index')
+        //     ->with('success', 'Keterangan Barang created successfully.');
     }
 
     /**
@@ -100,10 +101,7 @@ class KegiatanController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
-    {
-        //
-    }
+
 
     /**
      * Update the specified resource in storage.
@@ -112,16 +110,16 @@ class KegiatanController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Kegiatan $kegiatan)
+    public function update(Request $request, KetBarang $ketBarang)
     {
         $validated = $request->validate([
-            'kode_kegiatan' => 'required|unique:kegiatan,kode_kegiatan,' . $kegiatan->id,
-            'uraian_kegiatan' => 'required'
+            'kode_ketbarang' => 'required|unique:ket_barang,kode_ketbarang,' . $ketBarang->id,
+            'ket_barang' => 'required'
         ]);
 
-        $kegiatan->update($validated);
-        // return response()->json($kegiatan);
-        return response()->json(['success' => true, 'data' => $kegiatan]);
+        $ketBarang->update($validated);
+
+        return response()->json(['success' => true, 'data' => $ketBarang]);
     }
 
     /**
@@ -130,16 +128,18 @@ class KegiatanController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    // public function destroy(Kegiatan $kegiatan)
-    // {
-    //     $kegiatan->delete();
-    //     return response()->json(['success' => true]);
-    // }
-
-    public function destroy(Kegiatan $kegiatan)
+    public function destroy(KetBarang $ketBarang)
     {
-        $kegiatan->delete();
-        return redirect()->route('ket_barang.index')->with('status','Data Berhasil dihapus');
+        // dd($ketBarang);
+        // die();
+        if($ketBarang->rekening->isNotEmpty()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Tidak dapat menghapus data karena masih memiliki rekening terkait'
+            ], 422);
+        }
+        $ketBarang->delete();
 
+        return response()->json(['success' => true, 'data' => $ketBarang]);
     }
 }

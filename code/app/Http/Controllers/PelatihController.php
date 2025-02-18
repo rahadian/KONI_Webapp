@@ -45,7 +45,7 @@ class PelatihController extends Controller
             $nama_cabor = "";
         }
 
-        if($user->role == "admin"||$user->role == "cabor"){
+        if($user->role == "admin"||$user->role == "staff"||$user->role == "cabor"){
             return view('back.pelatih.index',[
                 'page'=>$page,
                 'data'=>$data,
@@ -241,7 +241,7 @@ class PelatihController extends Controller
         $user = \App\Models\User::where('id', $idz)->first();
         $nama_cabor = $user->cabor;
 
-        $upd_data = Pelatih::findorFail($id);;
+        $upd_data = Pelatih::findorFail($id);
         $upd_data->id_cabor = $validatedData['id_cabor'];
         $upd_data->nik = $validatedData['nik'];
         $upd_data->nama_lengkap = $validatedData['nama_lengkap'];

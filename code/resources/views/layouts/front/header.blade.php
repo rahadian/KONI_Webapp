@@ -5,13 +5,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="KONI Kabupaten Probolinggo">
 <meta name="keywords" content="KONI, Kabupaten Probolinggo, Probolinggo, Komite Olahraga Nasional Indonesia Kabupaten Probolinggo">
-<meta name="author" content="DPMD Kabupaten Probolinggo">
+<meta name="author" content="KONI Kabupaten Probolinggo">
 <!-- Open Graph meta tags -->
 <meta property="og:title" content="KONI Kabupaten Probolinggo">
 <meta property="og:description" content="KONI Kabupaten Probolinggo">
 <meta property="og:image" content="{{ asset('img/logo_koni_kab.png') }}">
 <meta property="og:url" content="{{ url()->current() }}">
 <meta property="og:type" content="website">
+<meta property="og:site_name" content="KONI Kabupaten Probolinggo" />
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="KONI Kabupaten Probolinggo" />
+<meta name="twitter:description" content="KONI Kabupaten Probolinggo" />
+<meta name="twitter:image" content="{{ asset('img/logo_koni_kab.png') }}" />
 
 <link rel="icon" type="image/png" href="{{ asset('img/logo_koni_kab.png') }}">
 @if($page != "KONI Kabupaten Probolinggo")
@@ -33,7 +39,7 @@
     color="black"
     ></l-quantum>
 </div>
-  <div id="header_nav" class="header pb-2" style="background-color: #70C7D6;">
+  <div id="header_nav" class="header pb-2" style="background-color: #84B0AF;">
     <div class="container pb-2">
         <div class="row align-items-start">
             <!-- <div class="col-lg-9 fw-bold"><font color="#ffffff" face="arial,helvetica">
@@ -52,7 +58,7 @@
     <!--container-->
   </div>
   <!-- Navbar -->
-  <nav class="navbar navbar-expand-sm navbar-dark sticky-top" style="height:80px; background-color: #70C7D6;">
+  <nav class="navbar navbar-expand-sm navbar-dark sticky-top" style="height:80px; background-color: #84B0AF;">
     <div class="container">
       <!-- <div id="currentDate" class="top-bar text-center text-white bg-dark py-2 d-none d-lg-block"></div> -->
       <a class="navbar-brand" href="{{ route('home') }}"><img loading="lazy" src="{{ asset('img/KONILOGO_hitam.png') }}" style="height: 65px;"></a>

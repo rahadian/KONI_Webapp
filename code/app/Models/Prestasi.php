@@ -10,6 +10,6 @@ class Prestasi extends Model
     use HasFactory;
     protected $table = 'prestasi';
     protected $fillable = [
-       'id_cabor','nama_kejuaraan', 'tingkat_kejuaraan','waktu_kegiatan','perolehan_medali','foto_kegiatan','scan_piagam','scan_hasil_pertandingan','created_at','updated_at'
+       'id_cabor','nama_kejuaraan', 'nama_atlet','tingkat_kejuaraan','waktu_kegiatan','perolehan_medali','foto_kegiatan','scan_piagam','scan_hasil_pertandingan','created_at','updated_at'
     ];
 }

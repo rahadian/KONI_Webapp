@@ -89,6 +89,7 @@ class LimitNominalController extends Controller
                     ->first();
 
         $check_exist = LimitNominal::where('tahun',$request->get('tahun'))
+                            ->where('cabor',$request->get('cabor'))
                             ->first();
         $new_data = new LimitNominal;
         $new_data->username=$request->get('username');
@@ -97,10 +98,12 @@ class LimitNominalController extends Controller
         $new_data->tahun=$request->get('tahun');
         $new_data->semester1=$request->get('semester1');
         $new_data->semester2=$request->get('semester2');
+        $new_data->sisa_semester1=$request->get('semester1');
+        $new_data->sisa_semester2=$request->get('semester2');
 
         if($user->role == "admin"){
             if ($check_exist){
-                return redirect()->route('limit_nominal.index')->with(['error' => 'Data dengan tahun yang sama sudah ada']);
+                return redirect()->route('limit_nominal.index')->with(['error' => 'Data dengan tahun dan cabor / staff yang sama sudah ada']);
             }else{
                 $new_data->save();
                 return redirect()->route('limit_nominal.index')->with('status','Data berhasil tersimpan. Terimakasih.');

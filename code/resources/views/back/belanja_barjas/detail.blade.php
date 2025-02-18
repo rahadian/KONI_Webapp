@@ -64,9 +64,9 @@
                                            <td><span class="text-secondary text-xs">{{ $item->tanggal_transaksi }}</span></td>
                                            <td><span class="text-secondary text-xs">{{ $item->created_at->format('d/m/Y') }}</span></td>
                                            <td>
-                                               @if(Auth::user()->role == "cabor")
-                                                   <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#editBudgetModal{{ $item->id }}"><i class="fa fa-pen"></i></button>
-                                                   <form onsubmit="return confirm('Anda Yakin untuk Menghapus Data Ini ?')" class="d-inline" action="{{ route('belanja.destroy', $item->id) }}" method="post">
+                                               @if(Auth::user()->role == "cabor"||Auth::user()->role == "staff")
+                                                   {{-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#editBudgetModal{{ $item->id }}"><i class="fa fa-pen"></i></button> --}}
+                                                   <form onsubmit="return confirm('Anda Yakin untuk Menghapus Data Ini ?')" class="d-inline" action="{{ route('belanjabarjas.destroy', $item->id) }}" method="post">
                                                        @csrf
                                                        @method('DELETE')
                                                        <button type="submit" class="btn btn-danger"><i class="fa fa-trash" style="font-size: 19px;"></i></button>
@@ -94,12 +94,12 @@
 
                                                            <div class="form-group">
                                                                <label for="id_perencanaan">Data Barang</label>
-                                                               <select class="form-control perencanaan-select" id="id_perencanaan" name="id_perencanaan" data-item-id="{{ $item->id }}">
-                                                                   <option value="">Pilih Data Barang</option>
-                                                                   <hr>
+                                                               <select class="form-control perencanaan-select" id="id_perencanaan" name="id_perencanaan" data-item-id="{{ $item->id }}" disabled>
+                                                                   {{-- <option value="">Pilih Data Barang</option>
+                                                                   <hr> --}}
                                                                    @foreach($perencanaan as $pr)
                                                                        <option value="{{ $pr->id }}" data-harga="{{ $pr->harga_satuan }}" data-jumlah="{{ $pr->jumlah }}">
-                                                                           {{ $pr->kode_barang }} - {{ $pr->nama_barang }} Rp {{ number_format($pr->harga_satuan, 0, ',', '.') }} - {{ $pr->jumlah }}
+                                                                           {{ $pr->kode_rekening }} - {{ $pr->nama_barang }} Rp {{ number_format($pr->harga_satuan, 0, ',', '.') }} - {{ $pr->jumlah }}
                                                                        </option>
                                                                    @endforeach
                                                                </select>
@@ -203,7 +203,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
 
                     const item = data.data[0];
-                    const maxJumlah = item.remaining + parseInt(jumlahSaatIniInput.value);
+                    let maxJumlah;
+                    const jumlahBelanja = item.jumlah_belanja;
+                    if(jumlahBelanja == 0){
+                        maxJumlah = item.jumlah_belanja;
+                    }else{
+                        maxJumlah = item.remaining + parseInt(jumlahSaatIniInput.value);
+                    }
+
 
                     // Update UI with the remaining stock
                     maxJumlahSpan.textContent = maxJumlah;

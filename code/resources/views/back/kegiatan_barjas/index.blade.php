@@ -4,27 +4,27 @@
 <div class="container mt-5">
     <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
-            <h4>Budget Management</h4>
-            <button class="btn btn-primary" onclick="showModal('kegiatan')">Add Kegiatan</button>
+            <h4>Data Inventaris</h4>
+            <button class="btn btn-primary" onclick="showModal('kegiatan')">Tambah Kegiatan</button>
         </div>
         <div class="card-body">
             @foreach($kegiatans as $kegiatan)
             <div class="kegiatan-item mb-3">
                 <div class="d-flex align-items-center">
-                    <button class="btn btn-link" type="button" data-bs-toggle="collapse"
+                    <button class="btn btn-link" type="button" onclick="toggleCollapse(this)"
                             data-bs-target="#kegiatan{{ $kegiatan->id }}">
                         <i class="fa fa-chevron-down"></i>
                     </button>
                     <span class="ms-2">{{ $kegiatan->kode_kegiatan }} - {{ $kegiatan->uraian_kegiatan }}</span>
                     <div class="ms-auto">
-                        <button class="btn btn-sm btn-warning" onclick="editKegiatan({{ $kegiatan->id }})">
+                        {{-- <button class="btn btn-sm btn-warning" onclick="editKegiatan({{ $kegiatan->id }})">
                             <i class="fa fa-edit"></i>
-                        </button>
+                        </button> --}}
                         {{-- <button class="btn btn-sm btn-danger" onclick="deleteKegiatan({{ $kegiatan->id }})">
                             <i class="fa fa-trash"></i>
                         </button> --}}
                         <button class="btn btn-sm btn-success" onclick="showModal('rekening', {{ $kegiatan->id }})">
-                            Add Rekening
+                            Tambah Rekening
                         </button>
                     </div>
                 </div>
@@ -33,7 +33,7 @@
                     @foreach($kegiatan->rekenings as $rekening)
                     <div class="rekening-item mt-2">
                         <div class="d-flex align-items-center">
-                            <button class="btn btn-link" type="button" data-bs-toggle="collapse"
+                            <button class="btn btn-link" type="button" onclick="toggleCollapse(this)"
                                     data-bs-target="#rekening{{ $rekening->id }}">
                                 <i class="fa fa-chevron-down"></i>
                             </button>
@@ -46,7 +46,7 @@
                                     <i class="fa fa-trash"></i>
                                 </button> --}}
                                 <button class="btn btn-sm btn-success" onclick="showModal('belanja', {{ $rekening->id }})">
-                                    Add Belanja
+                                    Tambah Belanja
                                 </button>
                             </div>
                         </div>
@@ -54,7 +54,7 @@
                                 @foreach($rekening->belanjas as $belanja)
                                 <div class="rekening-item mt-2">
                                     <div class="d-flex align-items-center">
-                                        <button class="btn btn-link" type="button" data-bs-toggle="collapse"
+                                        <button class="btn btn-link" type="button" onclick="toggleCollapse(this)"
                                                 data-bs-target="#belanja{{ $belanja->id }}">
                                             <i class="fa fa-chevron-down"></i>
                                         </button>
@@ -67,7 +67,7 @@
                                                 <i class="fa fa-trash"></i>
                                             </button> --}}
                                             <button class="btn btn-sm btn-success" onclick="showModal('barang', {{ $belanja->id }})">
-                                                Add Barang
+                                                Tambah Barang
                                             </button>
                                         </div>
                                     </div>
@@ -75,8 +75,7 @@
                                             @foreach($belanja->barangs as $barang)
                                             <div class="rekening-item mt-2">
                                                 <div class="d-flex align-items-center">
-                                                    <button class="btn btn-link" type="button" data-bs-toggle="collapse"
-                                                            data-bs-target="#barang{{ $barang->id }}">
+                                                    <button class="btn btn-link" type="button" onclick="toggleCollapse(this)" data-bs-target="#barang{{ $barang->id }}">
                                                         <i class="fa fa-chevron-down"></i>
                                                     </button>
                                                     <span class="ms-2">{{ $barang->kode_barang }} - {{ $barang->nama_barang }} (Harga Satuan Rp @currency($barang->harga_satuan))</span>
@@ -140,6 +139,19 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script>
+// Add this function to toggle the collapse state
+function toggleCollapse(button) {
+    const target = $(button).data('bs-target');
+    const icon = $(button).find('.fa');
+
+    if ($(target).hasClass('show')) {
+        icon.removeClass('fa-chevron-up').addClass('fa-chevron-down');
+    } else {
+        icon.removeClass('fa-chevron-down').addClass('fa-chevron-up');
+    }
+
+    $(target).collapse('toggle');
+}
 function formatCurrency(number) {
     return new Intl.NumberFormat('id-ID').format(number);
 }
